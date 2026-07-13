@@ -1,0 +1,122 @@
+---
+import Layout from "../layouts/Layout.astro"
+import Hero from "../components/Hero.tsx"
+import Marquee from "../components/Marquee.astro"
+import Manifiesto from "../components/Manifiesto.tsx"
+import ScrollStory from "../components/ScrollStory.tsx"
+import Vision from "../components/Vision.astro"
+import Servicios from "../components/Servicios.astro"
+import Ministerios from "../components/Ministerios.tsx"
+import Ubicaciones from "../components/Ubicaciones.astro"
+import Dar from "../components/Dar.astro"
+import CTASistema from "../components/CTASistema.tsx"
+import Contacto from "../components/Contacto.astro"
+import { images, media } from "../lib/images"
+
+const sistemaUrl = import.meta.env.PUBLIC_SISTEMA_URL ?? "https://sistema.ccrenacer.pe"
+
+const stages = [
+  {
+    n: "I",
+    title: "Encuentro.",
+    italic: "Conoces a Jesús.",
+    desc: "Todo comienza con una experiencia real con Cristo. Adoración, palabra y presencia que confrontan y restauran.",
+    img: images.encuentro,
+    verse: "Vengan y vean.",
+    verseRef: "Juan 1:39",
+    cta: "Tu primera visita",
+  },
+  {
+    n: "II",
+    title: "Formación.",
+    italic: "Creces con Él.",
+    desc: "Acompañamos tu proceso con discipulado, células y formación bíblica. Nadie camina solo.",
+    img: images.discipulado,
+    verse: "Hasta llegar a la plenitud de Cristo.",
+    verseRef: "Efesios 4:13",
+    cta: "Quiero un discipulador",
+  },
+  {
+    n: "III",
+    title: "Envío.",
+    italic: "Sales con Él.",
+    desc: "Cada renacido es enviado. A tu casa, tu barrio, tu universidad, tu trabajo, las naciones.",
+    img: images.envio,
+    verse: "Vayan y hagan discípulos en todas las naciones.",
+    verseRef: "Mateo 28:19",
+    cta: "Quiero servir",
+  },
+]
+
+const ministerios = [
+  {
+    n: "M.01",
+    nombre: "Familia",
+    desc: "Matrimonios y familias que construyen hogares fundados en Cristo.",
+    img: images.familias,
+    size: "wide" as const,
+    objectPos: "center 30%", // baja el encuadre para no cortar las caras
+  },
+  {
+    n: "M.02",
+    nombre: "Intercesión",
+    desc: "Guerreros de oración que sostienen la visión en la presencia de Dios.",
+    img: images.misiones,
+    size: "tall" as const,
+  },
+  {
+    n: "M.03",
+    nombre: "RNCR Kids",
+    desc: "Formamos a los más pequeños en el conocimiento de Jesús.",
+    img: images.ninos,
+    size: "square" as const,
+  },
+  {
+    n: "M.04",
+    nombre: "Jóvenes",
+    desc: "Una generación encendida viviendo la fe en la universidad y la calle.",
+    img: images.jovenes,
+    size: "square" as const,
+  },
+  {
+    n: "M.05",
+    nombre: "Alabanza & Adoración",
+    desc: "Músicos y adoradores al servicio de la presencia de Dios.",
+    img: images.adoracionMin,
+    size: "wide" as const,
+    objectPos: "center 22%", // muestra más arriba de la foto (no corta la cabeza)
+    flip: true,              // espeja: la persona principal mira a la izquierda
+  },
+  {
+    n: "M.06",
+    nombre: "Multimedia",
+    desc: "Creativos, técnicos y comunicadores que amplifican el mensaje.",
+    img: images.social,
+    size: "square" as const,
+  },
+]
+
+---
+
+<Layout>
+  <Hero client:load sistemaUrl={sistemaUrl} heroImg={images.hero} />
+  <Marquee variant="light" />
+  <Manifiesto
+    client:visible
+    videoSrc={media.manifiestoVideo}
+    videoWebm={media.manifiestoVideoWebm}
+    poster={media.manifiestoPoster}
+  />
+  <Vision />
+  <ScrollStory client:load stages={stages} />
+  <Ministerios client:visible ministerios={ministerios} />
+  <Servicios />
+  <Ubicaciones />
+  <Dar />
+  {/* SECCIÓN "Sistema interno" OCULTA (iría como 09, entre Dar y Contacto).
+      Para volver a mostrarla: descomentá la línea de abajo (quitá el {/* y * /})
+      y, en Contacto.astro, cambiá el número del eyebrow de "09 · Contacto" a "10 · Contacto".
+      En CTASistema.tsx el eyebrow ya quedó como "09 · Sistema interno". */}
+  {/* <CTASistema client:visible sistemaUrl={sistemaUrl} bgImg={images.sistema} /> */}
+  <Contacto />
+</Layout>

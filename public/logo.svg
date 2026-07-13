@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260" fill="none">
+  <title>Comunidad Cristiana Renacer</title>
+  <!-- Placeholder: reemplazar con el logo oficial. Forma llama/gota con cruz. -->
+  <path d="M100 8c-6 28-46 60-46 110a46 46 0 0 0 92 0c0-50-40-82-46-110z"
+        fill="currentColor" opacity="0.95"/>
+  <!-- Cruz interior -->
+  <rect x="92" y="70" width="16" height="90" rx="2" fill="#F2F2F2"/>
+  <rect x="68" y="98" width="64" height="16" rx="2" fill="#F2F2F2"/>
+</svg>

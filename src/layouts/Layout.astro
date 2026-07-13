@@ -1,0 +1,74 @@
+---
+import "../styles/global.css"
+import Nav from "../components/Nav.astro"
+import Footer from "../components/Footer.astro"
+import Loader from "../components/Loader.tsx"
+import CustomCursor from "../components/CustomCursor.tsx"
+
+interface Props {
+  title?: string
+  description?: string
+  showLoader?: boolean
+}
+
+const {
+  title = "C.C.Renacer | Lima, Perú",
+  description = "Comunidad Cristiana Renacer · Una iglesia que existe para reflejar el amor y la comunidad de Cristo. Renacer para ver el Reino. Juan 3:3.",
+  showLoader = true,
+} = Astro.props
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://ccrenacer.pe")
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="icon" type="image/png" href="/ccrncrlogo_favicon.png" />
+    <link rel="apple-touch-icon" href="/ccrncrlogo_favicon.png" />
+    <link rel="canonical" href={canonical} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#fbfbfa" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:site_name" content="Comunidad Cristiana Renacer" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Acelera la carga de los embeds de YouTube -->
+    <link rel="preconnect" href="https://www.youtube.com" />
+    <link rel="preconnect" href="https://www.google.com" />
+    <link rel="preconnect" href="https://i.ytimg.com" />
+    <link rel="preconnect" href="https://img.youtube.com" />
+
+    <!-- Fuentes: Fraunces (display) + Inter (sans) + JetBrains Mono (mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    {showLoader && <Loader client:load />}
+    <CustomCursor client:load />
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

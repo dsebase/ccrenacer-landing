@@ -1,0 +1,24 @@
+VIDEO DE FONDO · SECCIÓN MANIFIESTO
+====================================
+
+Archivo actual en uso:
+
+  video_rncr.mp4    (1080p · H.264 · sin audio · ~4.6 MB)
+                    Convertido desde el original 4K (video_rncr.MOV) con ffmpeg.
+
+La ruta se define en: landing/src/lib/images.ts → export const media → manifiestoVideo
+Opcionalmente podés agregar un .webm y apuntarlo en manifiestoVideoWebm para
+mejor compresión en navegadores modernos.
+
+Recomendaciones para que se vea bien y cargue rápido:
+  - Duración: 8–20 segundos en loop perfecto (que el final empalme con el inicio)
+  - Resolución: 1920x1080 (o 1280x720 si querés menos peso)
+  - Sin audio (el video va silenciado por autoplay)
+  - Peso ideal: < 5 MB. Comprimí con HandBrake o ffmpeg:
+      ffmpeg -i original.mov -vf scale=1920:-2 -c:v libx264 -crf 26 -an -movflags +faststart video_rncr.mp4
+      ffmpeg -i original.mov -vf scale=1920:-2 -c:v libvpx-vp9 -crf 38 -b:v 0 -an video_rncr.webm
+
+Mientras no exista el archivo, la sección muestra el poster (imagen) + las
+animaciones igual, así que nunca se ve rota.
+
+Para cambiar el poster o las rutas: landing/src/lib/images.ts → export const media

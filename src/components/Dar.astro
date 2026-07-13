@@ -1,0 +1,101 @@
+---
+// PLACEHOLDER: reemplazar con datos reales
+const cuentas = [
+  { banco: "BCP", tipo: "Cta. Corriente Soles", numero: "194-XXXXXXX-X-XX" },
+  { banco: "Interbank", tipo: "Cta. Soles", numero: "200-XXXXXXX-X-XX" },
+  { banco: "Yape / Plin", tipo: "Móvil", numero: "+51 931797790" },
+]
+---
+
+<section id="dar" class="relative py-32 lg:py-44 bg-ink-950 text-paper-50 overflow-hidden grain grain-dark">
+  {/* Resplandor sutil para dar profundidad al fondo oscuro */}
+  <div class="absolute inset-0 -z-0 opacity-50">
+    <div class="aurora-liquid"></div>
+  </div>
+
+  <div class="relative mx-auto max-w-[1400px] px-6 lg:px-10">
+    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-16 lg:gap-24 items-start">
+      <div>
+        <p class="eyebrow eyebrow-light mb-6">
+          <span>08 · Dar · Ofrenda</span>
+        </p>
+        <h2 class="font-display font-light text-[clamp(2.5rem,6vw,6rem)] leading-[1] text-paper-50 tracking-[-0.025em] text-balance">
+          Sembramos<br />
+          <span class="italic text-spirit-400">para el Reino.</span>
+        </h2>
+        <p class="mt-8 text-paper-100/70 text-lg max-w-md leading-relaxed">
+          Tu ofrenda sostiene la misión y el alcance de Renacer. Cada siembra
+          es semilla en vidas que están por renacer.
+        </p>
+
+        <p class="mt-12 font-display italic text-lg text-paper-100/70 max-w-md leading-relaxed border-l-2 border-spirit-400 pl-5">
+          "Dios ama al dador alegre."
+          <span class="block font-mono not-italic text-[10px] uppercase tracking-[0.3em] text-paper-100/45 mt-2">
+            2 Corintios 9:7
+          </span>
+        </p>
+      </div>
+
+      <div class="grid gap-3">
+        {cuentas.map((c) => (
+          <article class="bento bento-dark p-7 flex items-center justify-between gap-6" data-cursor="hover">
+            <div>
+              <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-300 mb-2">
+                {c.banco}
+              </p>
+              <p class="text-sm text-paper-100/55 mb-1">{c.tipo}</p>
+              <p class="font-display text-2xl text-paper-50 tracking-[-0.02em]">{c.numero}</p>
+            </div>
+            <button
+              type="button"
+              data-copy={c.numero}
+              class="shrink-0 w-12 h-12 rounded-full border border-paper-50/20 flex items-center justify-center text-paper-100 hover:bg-spirit-500 hover:text-ink-950 hover:border-spirit-500 transition-all"
+              aria-label={`Copiar ${c.numero}`}
+              data-cursor="hover"
+            >
+              <svg class="i-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              <svg class="i-check hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+            </button>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>("#dar [data-copy]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const value = btn.dataset.copy ?? ""
+        try {
+          await navigator.clipboard.writeText(value)
+        } catch {
+          // Fallback para navegadores/contextos sin clipboard API
+          const ta = document.createElement("textarea")
+          ta.value = value
+          ta.style.position = "fixed"
+          ta.style.opacity = "0"
+          document.body.appendChild(ta)
+          ta.select()
+          try { document.execCommand("copy") } catch {}
+          document.body.removeChild(ta)
+        }
+        // Feedback visual: muestra el check ~1.5s
+        const copy = btn.querySelector(".i-copy")
+        const check = btn.querySelector(".i-check")
+        copy?.classList.add("hidden")
+        check?.classList.remove("hidden")
+        btn.classList.add("!bg-spirit-500", "!text-ink-950", "!border-spirit-500")
+        setTimeout(() => {
+          copy?.classList.remove("hidden")
+          check?.classList.add("hidden")
+          btn.classList.remove("!bg-spirit-500", "!text-ink-950", "!border-spirit-500")
+        }, 1500)
+      })
+    })
+  </script>
+</section>

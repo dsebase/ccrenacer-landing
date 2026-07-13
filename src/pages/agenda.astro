@@ -1,0 +1,45 @@
+---
+import Layout from "../layouts/Layout.astro"
+import AgendaCalendar from "../components/AgendaCalendar.tsx"
+---
+
+<Layout
+  title="Agenda Renacer | C.C.Renacer"
+  description="Todas las actividades de Comunidad Cristiana Renacer: servicios, oración, eventos y conferencias. Consulta el calendario completo con detalles."
+  showLoader={false}
+>
+  <section class="relative pt-32 lg:pt-44 pb-16 lg:pb-20 bg-paper-50">
+    <div class="mx-auto max-w-[1400px] px-6 lg:px-10">
+      <a
+        href="/#servicios"
+        class="link-underline font-mono text-xs uppercase tracking-[0.2em] text-ink-500 inline-flex items-center gap-2 mb-10"
+        data-cursor="hover"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M11 5l-7 7 7 7" />
+        </svg>
+        Volver al inicio
+      </a>
+
+      <div class="grid lg:grid-cols-[1fr_1fr] gap-8 lg:gap-20 items-end">
+        <div>
+          <p class="eyebrow mb-6"><span>Agenda Renacer</span></p>
+          <h1 class="font-display font-light text-[clamp(2.5rem,7vw,6.5rem)] leading-[0.98] text-ink-900 tracking-[-0.03em] text-balance">
+            Toda la vida<br />
+            <span class="italic text-spirit-500">de la iglesia.</span>
+          </h1>
+        </div>
+        <p class="text-ink-500 text-lg max-w-md leading-relaxed text-pretty">
+          Servicios semanales, encuentros de oración, eventos y conferencias.
+          Elegí un día en el calendario para ver los detalles de cada actividad.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative pb-32 lg:pb-44 bg-paper-50">
+    <div class="mx-auto max-w-[1400px] px-6 lg:px-10">
+      <AgendaCalendar client:load />
+    </div>
+  </section>
+</Layout>

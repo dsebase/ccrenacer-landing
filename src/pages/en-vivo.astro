@@ -1,0 +1,368 @@
+---
+import Layout from "../layouts/Layout.astro"
+import Reveal from "../components/Reveal.tsx"
+import { images } from "../lib/images"
+import { social, getYouTubeVideos, ytThumb, ytWatch } from "../lib/social"
+
+const facebook = social.facebook
+const youtube = social.youtube
+const instagram = social.instagram
+
+// URL de suscripción directa (abre el diálogo de suscripción en YouTube)
+const subUrl = social.youtubeChannelId
+  ? `https://www.youtube.com/channel/${social.youtubeChannelId}?sub_confirmation=1`
+  : `${social.youtube}?sub_confirmation=1`
+
+// ─────────────────────────────────────────────────────────────
+// FACEBOOK LIVE (hero principal) · se configura desde el .env
+//   PUBLIC_FB_VIDEO_HREF = URL del video en vivo
+//   PUBLIC_FB_LIVE_NOW   = true (cuando estén transmitiendo)
+const fbVideoHref = social.fbVideoHref
+const enVivoAhora = social.liveNow
+const fbEmbed = fbVideoHref
+  ? `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(fbVideoHref)}&show_text=false&autoplay=true`
+  : ""
+
+// ─────────────────────────────────────────────────────────────
+// YOUTUBE (tira 1) · AUTOMÁTICO vía RSS del canal (sin API key).
+// Configurá PUBLIC_YOUTUBE_CHANNEL_ID en el .env y se traen solos los últimos
+// videos con su thumbnail real. Si no hay channel ID o falla, usa el placeholder.
+const ytFetched = await getYouTubeVideos(social.youtubeChannelId, 8)
+const ytVideos = ytFetched.length
+  ? ytFetched
+  : [
+      { id: "dQw4w9WgXcQ", titulo: "El nuevo nacimiento", fecha: "Domingo · 12 May" },
+      { id: "JGwWNGJdvx8", titulo: "Una familia en misión", fecha: "Domingo · 5 May" },
+      { id: "kJQP7kiw5Fk", titulo: "Adorar en espíritu y verdad", fecha: "28 Abr" },
+      { id: "OPf0YbXqDm0", titulo: "El poder de la comunidad", fecha: "21 Abr" },
+      { id: "9bZkp7q19f0", titulo: "Llamados a las naciones", fecha: "14 Abr" },
+      { id: "fJ9rUzIMcZQ", titulo: "Bautismos de verano", fecha: "Especial" },
+    ]
+
+// ─────────────────────────────────────────────────────────────
+// INSTAGRAM (tira 2) · feed real automático vía widget Elfsight
+// (el embed está más abajo en la sección de Instagram).
+---
+
+<Layout
+  title="En vivo | C.C.Renacer"
+  description="Transmisiones en vivo por Facebook, prédicas en YouTube y momentos en Instagram. Conéctate con Comunidad Cristiana Renacer desde donde estés."
+>
+  <!-- ───────── Header ───────── -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10 opacity-50"><div class="aurora-liquid"></div></div>
+    <div class="mx-auto max-w-[1400px] px-6 lg:px-10 pt-44 lg:pt-56 pb-12 lg:pb-16">
+      <a href="/" class="eyebrow hover:text-ink-900 transition-colors" data-cursor="hover">
+        <span>← Volver al inicio</span>
+      </a>
+      <div class="mt-10 grid lg:grid-cols-[1.5fr_1fr] gap-8 lg:items-end">
+        <h1 class="font-display font-light text-[clamp(3.25rem,9vw,8rem)] leading-[0.92] text-ink-900 tracking-[-0.03em]">
+          En <span class="italic text-spirit-500">vivo.</span>
+        </h1>
+        <p class="text-ink-500 text-lg leading-relaxed text-pretty max-w-md lg:pb-3">
+          Conéctate a nuestras transmisiones por Facebook, mira las prédicas en
+          YouTube y vive el día a día en Instagram.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── HERO · Facebook Live ───────── -->
+  <section class="relative">
+    <div class="mx-auto max-w-[1400px] px-6 lg:px-10">
+      <Reveal client:visible>
+        <div class="flex items-center gap-3 mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.88v2.26h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
+          <p class="eyebrow !text-ink-500"><span>Transmisión por Facebook Live</span></p>
+        </div>
+
+        <div class="relative rounded-[28px] overflow-hidden bg-ink-950 group">
+          {fbEmbed ? (
+            <div class="relative w-full" style="aspect-ratio:16/9">
+              <iframe
+                class="absolute inset-0 w-full h-full"
+                src={fbEmbed}
+                title="Facebook Live · Renacer"
+                style="border:none;overflow:hidden"
+                scrolling="no"
+                frameborder="0"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+          ) : (
+            <a href={facebook} target="_blank" rel="noopener" class="relative block" data-cursor="hover">
+              <img src={images.hero} alt="Transmisión en vivo" style="aspect-ratio:16/9" class="w-full object-cover opacity-70 transition-transform duration-[1200ms] group-hover:scale-105" />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/30 to-ink-950/40"></div>
+
+              <div class="absolute top-6 left-6 lg:top-8 lg:left-8">
+                {enVivoAhora ? (
+                  <span class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600 text-paper-50 font-mono text-[10px] uppercase tracking-[0.25em]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-paper-50 animate-pulse"></span> En vivo ahora
+                  </span>
+                ) : (
+                  <span class="px-3.5 py-1.5 rounded-full bg-paper-50/95 text-ink-900 font-mono text-[10px] uppercase tracking-[0.25em]">
+                    Próxima transmisión · Dom 10 AM
+                  </span>
+                )}
+              </div>
+
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-20 h-20 lg:w-28 lg:h-28 rounded-full bg-[#1877F2] flex items-center justify-center transition-transform duration-500 group-hover:scale-110 shadow-2xl">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="#fff" class="ml-1.5"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+
+              <div class="absolute bottom-6 left-6 right-6 lg:bottom-10 lg:left-10 lg:right-10 text-paper-50">
+                <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-300 mb-3">Celebración Dominical</p>
+                <h2 class="font-display text-3xl lg:text-5xl tracking-[-0.025em] max-w-3xl">Su presencia, mañana, tarde y noche.</h2>
+              </div>
+            </a>
+          )}
+        </div>
+
+        <div class="mt-8 grid lg:grid-cols-[1fr_auto] gap-6 lg:items-center">
+          <p class="text-ink-500 text-lg leading-relaxed text-pretty max-w-2xl">
+            Cada domingo transmitimos nuestra celebración en vivo por Facebook.
+            Si no puedes acompañarnos presencialmente, conéctate desde donde estés.
+          </p>
+          <a href={facebook} target="_blank" rel="noopener" class="shrink-0 inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-full bg-ink-900 text-paper-50 font-medium text-sm min-w-[168px] hover:bg-[#1877F2] transition-colors duration-300" data-cursor="hover">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.88v2.26h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
+            <span>Ver Facebook</span>
+          </a>
+        </div>
+      </Reveal>
+    </div>
+  </section>
+
+  <!-- ───────── TIRA 1 · YouTube ───────── -->
+  <section class="relative pt-24 lg:pt-32">
+    <div class="mx-auto max-w-[1400px] px-6 lg:px-10 flex items-end justify-between gap-6 mb-12 lg:mb-16">
+      <div>
+        <p class="eyebrow mb-4"><span>Prédicas en YouTube</span></p>
+        <h2 class="font-display font-light text-[clamp(2rem,4.5vw,3.5rem)] leading-[1] text-ink-900 tracking-[-0.025em]">
+          Últimos <span class="italic text-spirit-500">videos</span>
+        </h2>
+      </div>
+      <a href={youtube} target="_blank" rel="noopener" class="shrink-0 inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-full bg-ink-900 text-paper-50 font-medium text-sm min-w-[168px] hover:bg-[#FF0000] transition-colors duration-300" data-cursor="hover">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.8-.5-5.6c-.3-1-1-1.8-2-2C18.8 4 12 4 12 4s-6.8 0-8.5.5c-1 .3-1.8 1-2 2C1 8.2 1 12 1 12s0 3.8.5 5.6c.3 1 1 1.8 2 2C5.2 20 12 20 12 20s6.8 0 8.5-.5c1-.3 1.8-1 2-2 .5-1.8.5-5.5.5-5.5zM10 15.5v-7l6 3.5-6 3.5z"/></svg>
+        <span>Ver YouTube</span>
+      </a>
+    </div>
+
+    <div class="relative group/strip">
+      <div class="scroll-strip overflow-x-auto cursor-grab" id="strip-yt">
+      <div class="flex gap-5 px-6 lg:px-10 pb-2 min-w-min">
+        {ytVideos.map((v) => (
+          <a href={ytWatch(v.id)} target="_blank" rel="noopener" data-yt={v.id} data-yt-title={v.titulo} class="group shrink-0 w-[300px] sm:w-[340px]" data-cursor="hover">
+            <div class="relative rounded-[18px] overflow-hidden bg-ink-900">
+              <img src={ytThumb(v.id)} alt={v.titulo} style="aspect-ratio:16/9" class="w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink-950/55 to-transparent"></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-14 h-14 rounded-full bg-red-600 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 shadow-lg">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" class="ml-0.5"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+            </div>
+            <p class="font-mono text-[10px] uppercase tracking-[0.25em] text-spirit-500 mt-4 mb-1.5">{v.fecha}</p>
+            <h3 class="font-display text-xl text-ink-900 leading-tight group-hover:text-spirit-500 transition-colors">{v.titulo}</h3>
+          </a>
+        ))}
+      </div>
+      </div>
+      <div class="pointer-events-none absolute inset-y-0 left-0 w-10 lg:w-20 bg-gradient-to-r from-paper-50 to-transparent"></div>
+      <div class="pointer-events-none absolute inset-y-0 right-0 w-10 lg:w-20 bg-gradient-to-l from-paper-50 to-transparent"></div>
+
+      {/* Flechas flotantes a los costados (centradas sobre las miniaturas) */}
+      <button
+        type="button"
+        data-strip-prev="yt"
+        aria-label="Anterior"
+        class="hidden md:flex absolute left-3 lg:left-6 top-[38%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-paper-50 shadow-xl border border-ink-900/10 items-center justify-center text-ink-900 hover:bg-ink-900 hover:text-paper-50 transition-colors"
+        data-cursor="hover"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+      </button>
+      <button
+        type="button"
+        data-strip-next="yt"
+        aria-label="Siguiente"
+        class="hidden md:flex absolute right-3 lg:right-6 top-[38%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-paper-50 shadow-xl border border-ink-900/10 items-center justify-center text-ink-900 hover:bg-ink-900 hover:text-paper-50 transition-colors"
+        data-cursor="hover"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ───────── TIRA 2 · Instagram ───────── -->
+  <section class="relative pt-24 lg:pt-32 pb-28 lg:pb-36">
+    <div class="mx-auto max-w-[1400px] px-6 lg:px-10 flex items-end justify-between gap-6 mb-8">
+      <div>
+        <p class="eyebrow mb-4"><span>Día a día en Instagram</span></p>
+        <h2 class="font-display font-light text-[clamp(2rem,4.5vw,3.5rem)] leading-[1] text-ink-900 tracking-[-0.025em]">
+          @ccrenacer.pe_
+        </h2>
+      </div>
+      <a href={instagram} target="_blank" rel="noopener" class="shrink-0 inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-full bg-ink-900 text-paper-50 font-medium text-sm min-w-[168px] hover:bg-[#E1306C] transition-colors duration-300" data-cursor="hover">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        <span>Ver Instagram</span>
+      </a>
+    </div>
+
+    {/* Feed real de Instagram (widget Elfsight) — full width como la tira de YouTube */}
+    <style is:global>
+      /* Solo redondea las imágenes (sin overflow:hidden ni tocar contenedores,
+         para no romper la carga de más publicaciones). */
+      #ig-feed img,
+      #ig-feed [style*="background-image"] {
+        border-radius: 14px;
+      }
+    </style>
+    <div class="px-6 lg:px-10" id="ig-feed">
+      <script is:inline async src="https://elfsightcdn.com/platform.js"></script>
+      <div class="elfsight-app-b3404336-9a18-465f-a626-0756bfb2e97e" data-elfsight-app-lazy></div>
+    </div>
+  </section>
+
+  {/* ───────── Modal reproductor de YouTube ───────── */}
+  <div
+    id="yt-modal"
+    class="fixed inset-0 z-[80] hidden items-center justify-center bg-ink-950/92 backdrop-blur-md p-4 sm:p-6"
+  >
+    <div class="relative w-full max-w-4xl">
+      <button
+        id="yt-close"
+        type="button"
+        aria-label="Cerrar"
+        class="absolute -top-12 right-0 w-10 h-10 rounded-full border border-paper-50/30 text-paper-50 flex items-center justify-center hover:bg-paper-50 hover:text-ink-950 transition-colors"
+        data-cursor="hover"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+
+      <div class="relative rounded-[20px] overflow-hidden bg-black" style="aspect-ratio:16/9">
+        {/* Spinner de carga */}
+        <div id="yt-spinner" class="absolute inset-0 flex items-center justify-center">
+          <span class="w-10 h-10 rounded-full border-2 border-paper-50/20 border-t-spirit-400 animate-spin"></span>
+        </div>
+        <iframe
+          id="yt-iframe"
+          class="absolute inset-0 w-full h-full opacity-0 transition-opacity duration-500"
+          title="Reproductor de video"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <div class="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h3 id="yt-title" class="font-display text-xl lg:text-2xl text-paper-50 leading-tight"></h3>
+        <a href={subUrl} target="_blank" rel="noopener" class="btn-spirit shrink-0" data-cursor="hover">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.8-.5-5.6c-.3-1-1-1.8-2-2C18.8 4 12 4 12 4s-6.8 0-8.5.5c-1 .3-1.8 1-2 2C1 8.2 1 12 1 12s0 3.8.5 5.6c.3 1 1 1.8 2 2C5.2 20 12 20 12 20s6.8 0 8.5-.5c1-.3 1.8-1 2-2 .5-1.8.5-5.5.5-5.5zM10 15.5v-7l6 3.5-6 3.5z"/></svg>
+          <span>Suscríbete</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Arrastre con el mouse + flechas para las tiras horizontales
+    document.querySelectorAll<HTMLElement>(".scroll-strip").forEach((strip) => {
+      let isDown = false
+      let startX = 0
+      let scrollStart = 0
+      let moved = false
+
+      strip.addEventListener("pointerdown", (e) => {
+        isDown = true
+        moved = false
+        startX = e.pageX
+        scrollStart = strip.scrollLeft
+        strip.style.cursor = "grabbing"
+      })
+      strip.addEventListener("pointermove", (e) => {
+        if (!isDown) return
+        const dx = e.pageX - startX
+        if (Math.abs(dx) > 5) moved = true
+        strip.scrollLeft = scrollStart - dx
+      })
+      const end = () => {
+        isDown = false
+        strip.style.cursor = "grab"
+      }
+      strip.addEventListener("pointerup", end)
+      strip.addEventListener("pointerleave", end)
+      // Evita que el arrastre dispare el enlace de la card
+      strip.addEventListener(
+        "click",
+        (e) => {
+          if (moved) {
+            e.preventDefault()
+            e.stopPropagation()
+          }
+        },
+        true,
+      )
+    })
+
+    const scrollStrip = (key: string, dir: number) => {
+      const el = document.getElementById("strip-" + key)
+      if (!el) return
+      el.scrollBy({ left: dir * Math.min(el.clientWidth * 0.8, 700), behavior: "smooth" })
+    }
+    document.querySelectorAll<HTMLElement>("[data-strip-prev]").forEach((b) =>
+      b.addEventListener("click", () => scrollStrip(b.dataset.stripPrev!, -1)),
+    )
+    document.querySelectorAll<HTMLElement>("[data-strip-next]").forEach((b) =>
+      b.addEventListener("click", () => scrollStrip(b.dataset.stripNext!, 1)),
+    )
+
+    // ── Modal reproductor de YouTube ──
+    const modal = document.getElementById("yt-modal")
+    const frame = document.getElementById("yt-iframe") as HTMLIFrameElement | null
+    const titleEl = document.getElementById("yt-title")
+    const closeBtn = document.getElementById("yt-close")
+    const spinner = document.getElementById("yt-spinner")
+
+    frame?.addEventListener("load", () => {
+      if (frame.src) {
+        frame.classList.remove("opacity-0")
+        if (spinner) spinner.style.display = "none"
+      }
+    })
+
+    const openVideo = (id: string, title: string) => {
+      if (!modal || !frame) return
+      frame.classList.add("opacity-0")
+      if (spinner) spinner.style.display = "flex"
+      frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`
+      if (titleEl) titleEl.textContent = title || ""
+      modal.classList.remove("hidden")
+      modal.classList.add("flex")
+      document.body.style.overflow = "hidden"
+    }
+    const closeVideo = () => {
+      if (!modal || !frame) return
+      frame.src = ""
+      frame.classList.add("opacity-0")
+      modal.classList.add("hidden")
+      modal.classList.remove("flex")
+      document.body.style.overflow = ""
+    }
+
+    document.querySelectorAll<HTMLElement>("[data-yt]").forEach((card) => {
+      card.addEventListener("click", (e) => {
+        e.preventDefault()
+        openVideo(card.dataset.yt!, card.dataset.ytTitle ?? "")
+      })
+    })
+    closeBtn?.addEventListener("click", closeVideo)
+    modal?.addEventListener("click", (e) => {
+      if (e.target === modal) closeVideo()
+    })
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeVideo()
+    })
+  </script>
+</Layout>

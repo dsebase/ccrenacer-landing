@@ -1,0 +1,37 @@
+---
+interface Props {
+  variant?: "light" | "dark"
+}
+const { variant = "light" } = Astro.props
+
+const words = [
+  "Renacer",
+  "Renacer para ver el Reino",
+  "Juan 3:3",
+  "Comunidad Cristiana Renacer",
+  "El reflejo del amor de Cristo",
+]
+const set = [...words, ...words, ...words]
+---
+
+<div
+  class:list={[
+    "relative overflow-hidden border-y py-6",
+    variant === "dark"
+      ? "bg-ink-900 text-paper-50 border-ink-700"
+      : "bg-paper-100 text-ink-900 border-paper-200",
+  ]}
+>
+  <div class="marquee">
+    {set.map((w, i) => (
+      <span class="inline-flex items-center gap-12 font-display text-4xl md:text-6xl tracking-tight">
+        {w}
+        <span class="text-spirit-500">
+          <svg width="32" height="40" viewBox="0 0 200 260" fill="currentColor">
+            <path d="M100 8c-6 28-46 60-46 110a46 46 0 0 0 92 0c0-50-40-82-46-110z" />
+          </svg>
+        </span>
+      </span>
+    ))}
+  </div>
+</div>

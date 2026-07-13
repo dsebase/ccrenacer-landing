@@ -1,0 +1,138 @@
+---
+import { images } from "../lib/images"
+
+// Grilla bento 3×2 (en lg). Cada tarjeta encaja sin huecos:
+//   fila1: [Adoración span-2] [Comunidad span-row-2 ->]
+//   fila2: [Formación] [Misión]            [<- Comunidad]
+const pilares = [
+  {
+    n: "01",
+    t: "Adoración",
+    d: "Adoramos en espíritu y verdad como respuesta a quién es Cristo.",
+    img: images.adoracion,
+    cls: "lg:col-span-2",
+    variant: "dark",
+    image: true,
+  },
+  {
+    n: "02",
+    t: "Visión",
+    d: "Ver una generación que renace y transforma su ciudad y las naciones para la gloria de Cristo.",
+    img: images.mision,
+    cls: "lg:row-span-2",
+    variant: "dark",
+    image: true,
+  },
+  {
+    n: "03",
+    t: "Formación",
+    d: "Discipulado que forma el carácter de Cristo en cada persona.",
+    img: images.formacion,
+    cls: "",
+    variant: "dark",
+    image: true,
+  },
+  {
+    n: "04",
+    t: "Comunidad",
+    d: "Casas abiertas, mesas compartidas. Familia real, no metáfora.",
+    img: images.comunidad,
+    cls: "",
+    variant: "dark",
+    image: true,
+  },
+]
+
+const variantBase: Record<string, string> = {
+  dark: "bento bento-dark",
+  light: "bento",
+  spirit: "bento bento-spirit",
+}
+---
+
+<section id="vision" class="relative py-32 lg:py-44 bg-paper-50">
+  <div class="mx-auto max-w-[1400px] px-6 lg:px-10">
+    <div class="grid lg:grid-cols-[1fr_1.5fr] gap-10 lg:gap-20 mb-16 items-end">
+      <div>
+        <p class="eyebrow mb-6">
+          <span>03 · Visión & Misión</span>
+        </p>
+        <h2 class="font-display font-light text-[clamp(2.5rem,6vw,6rem)] leading-[1] text-ink-900 tracking-[-0.025em] text-balance">
+          Una iglesia<br />
+          <span class="italic text-spirit-500">que refleja</span>
+        </h2>
+      </div>
+      <p class="text-ink-500 text-lg max-w-md leading-relaxed text-pretty">
+        Cuatro pilares sostienen lo que somos. Cada uno una expresión natural
+        del Cristo que vive en nosotros.
+      </p>
+    </div>
+
+    <div class="grid gap-5 lg:grid-cols-3 lg:auto-rows-[290px]">
+      {pilares.map((p) => (
+        <article
+          class={`${variantBase[p.variant]} ${p.cls} group relative overflow-hidden p-8 lg:p-10 flex flex-col justify-between min-h-[260px] lg:min-h-0`}
+          data-cursor="hover"
+        >
+          {p.image && (
+            <div class="absolute inset-0 rounded-[28px] overflow-hidden">
+              <img
+                src={p.img}
+                alt={p.t}
+                class="w-full h-full object-cover opacity-40 group-hover:opacity-55 group-hover:scale-105 transition-all duration-700"
+                loading="lazy"
+              />
+              <div class={`absolute inset-0 ${p.variant === 'dark' ? 'bg-gradient-to-t from-ink-950/90 via-ink-950/55 to-ink-950/35' : 'bg-paper-50/80'}`}></div>
+            </div>
+          )}
+
+          {/* Watermark de la llama para llenar el espacio negativo */}
+          <div
+            class={`absolute -bottom-10 -right-8 z-0 pointer-events-none transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-3 ${p.variant === 'spirit' ? 'text-ink-950/[0.07]' : 'text-spirit-300/[0.10]'}`}
+            aria-hidden="true"
+          >
+            <svg width="220" height="286" viewBox="0 0 200 260" fill="currentColor">
+              <path d="M100 8c-6 28-46 60-46 110a46 46 0 0 0 92 0c0-50-40-82-46-110z" />
+            </svg>
+          </div>
+
+          <div class="relative z-10 flex items-start justify-between">
+            <span class={`font-mono text-xs tracking-[0.3em] ${p.variant === 'dark' ? 'text-spirit-300' : p.variant === 'spirit' ? 'text-ink-950/60' : 'text-ink-400'}`}>
+              {p.n}
+            </span>
+            <span class={`transition-transform duration-500 group-hover:rotate-0 rotate-[-30deg] ${p.variant === 'dark' ? 'text-spirit-300' : p.variant === 'spirit' ? 'text-ink-950' : 'text-spirit-500'}`}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M7 17L17 7M9 7h8v8" />
+              </svg>
+            </span>
+          </div>
+
+          <div class="relative z-10">
+            <h3 class={`font-display text-4xl lg:text-5xl tracking-[-0.02em] mb-3 ${p.variant === 'dark' || p.variant === 'spirit' ? 'text-paper-50' : 'text-ink-900'} ${p.variant === 'spirit' ? '!text-ink-950' : ''}`}>
+              {p.t}
+            </h3>
+            <p class={`text-sm leading-relaxed max-w-[32ch] ${p.variant === 'dark' ? 'text-paper-100/85' : p.variant === 'spirit' ? 'text-ink-950/85' : 'text-ink-500'}`}>
+              {p.d}
+            </p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    {/* Cierre: declaración de misión — completa la parte "Misión" de la sección */}
+    <div class="mt-16 lg:mt-24 border-t border-ink-900/10 pt-12 lg:pt-16 grid lg:grid-cols-[auto_1fr_auto] gap-8 lg:gap-16 lg:items-center">
+      <p class="eyebrow shrink-0">
+        <span>Nuestra misión</span>
+      </p>
+      <p class="font-display font-light text-2xl lg:text-4xl text-ink-900 leading-[1.2] text-balance max-w-3xl">
+        Formar discípulos que <span class="italic text-spirit-500">renacen, crecen y son enviados</span> a reflejar a Cristo en cada nación.
+      </p>
+      <a href="#proceso" class="btn-outline shrink-0 self-start lg:self-center" data-cursor="hover">
+        <span>Conoce el proceso</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
