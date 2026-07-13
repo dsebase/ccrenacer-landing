@@ -73,10 +73,8 @@ const servicios = [
           <div class="absolute inset-0 bg-gradient-to-t from-ink-950/85 via-ink-950/30 to-transparent"></div>
 
           <div class="relative h-full flex flex-col justify-between p-7 text-paper-50">
-            <div class="flex items-start justify-between gap-2">
-              <span class="font-mono text-[10px] uppercase tracking-[0.3em] max-w-[60%] leading-relaxed">
-                {s.dia}
-              </span>
+            {/* Fila superior: solo el badge de "Principal" / "Zoom" a la derecha. */}
+            <div class="flex items-start justify-end gap-2 min-h-[28px]">
               {s.destacado ? (
                 <span class="shrink-0 font-mono text-[10px] uppercase tracking-[0.3em] px-2 py-1 bg-spirit-500 text-ink-950 rounded-full">
                   Principal
@@ -89,7 +87,11 @@ const servicios = [
               ) : null}
             </div>
 
+            {/* Bloque inferior: día grande arriba de la hora + nombre del servicio. */}
             <div>
+              <p class="font-display font-bold text-3xl lg:text-4xl leading-none tracking-[-0.02em] text-paper-50 mb-1">
+                {s.dia}
+              </p>
               <p class="font-display leading-none mb-2 tracking-[-0.02em]">
                 <span class="text-5xl lg:text-6xl">{s.hora}</span>
                 <span class="text-xl lg:text-2xl ml-1">{s.periodo}</span>

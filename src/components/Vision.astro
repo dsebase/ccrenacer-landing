@@ -1,30 +1,20 @@
 ---
 import { images } from "../lib/images"
 
-// Grilla bento 3×2 (en lg). Cada tarjeta encaja sin huecos:
-//   fila1: [Adoración span-2] [Comunidad span-row-2 ->]
-//   fila2: [Formación] [Misión]            [<- Comunidad]
+// Grilla bento 4 columnas (en lg). Cuatro pilares alineados en una fila:
+//   [Adoración] [Formación] [Comunidad] [Amor de Cristo]
 const pilares = [
   {
     n: "01",
     t: "Adoración",
     d: "Adoramos en espíritu y verdad como respuesta a quién es Cristo.",
     img: images.adoracion,
-    cls: "lg:col-span-2",
+    cls: "",
     variant: "dark",
     image: true,
   },
   {
     n: "02",
-    t: "Visión",
-    d: "Ver una generación que renace y transforma su ciudad y las naciones para la gloria de Cristo.",
-    img: images.mision,
-    cls: "lg:row-span-2",
-    variant: "dark",
-    image: true,
-  },
-  {
-    n: "03",
     t: "Formación",
     d: "Discipulado que forma el carácter de Cristo en cada persona.",
     img: images.formacion,
@@ -33,10 +23,19 @@ const pilares = [
     image: true,
   },
   {
-    n: "04",
+    n: "03",
     t: "Comunidad",
     d: "Casas abiertas, mesas compartidas. Familia real, no metáfora.",
     img: images.comunidad,
+    cls: "",
+    variant: "dark",
+    image: true,
+  },
+  {
+    n: "04",
+    t: "Amor de Cristo",
+    d: "El amor que recibimos en la cruz nos impulsa a amar sin medida.",
+    img: images.mision,
     cls: "",
     variant: "dark",
     image: true,
@@ -55,7 +54,7 @@ const variantBase: Record<string, string> = {
     <div class="grid lg:grid-cols-[1fr_1.5fr] gap-10 lg:gap-20 mb-16 items-end">
       <div>
         <p class="eyebrow mb-6">
-          <span>03 · Visión & Misión</span>
+          <span>03 · Nuestros pilares</span>
         </p>
         <h2 class="font-display font-light text-[clamp(2.5rem,6vw,6rem)] leading-[1] text-ink-900 tracking-[-0.025em] text-balance">
           Una iglesia<br />
@@ -68,7 +67,7 @@ const variantBase: Record<string, string> = {
       </p>
     </div>
 
-    <div class="grid gap-5 lg:grid-cols-3 lg:auto-rows-[290px]">
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[360px]">
       {pilares.map((p) => (
         <article
           class={`${variantBase[p.variant]} ${p.cls} group relative overflow-hidden p-8 lg:p-10 flex flex-col justify-between min-h-[260px] lg:min-h-0`}
@@ -119,13 +118,13 @@ const variantBase: Record<string, string> = {
       ))}
     </div>
 
-    {/* Cierre: declaración de misión — completa la parte "Misión" de la sección */}
+    {/* Cierre: declaración de formación — el corazón discipular de la iglesia */}
     <div class="mt-16 lg:mt-24 border-t border-ink-900/10 pt-12 lg:pt-16 grid lg:grid-cols-[auto_1fr_auto] gap-8 lg:gap-16 lg:items-center">
       <p class="eyebrow shrink-0">
-        <span>Nuestra misión</span>
+        <span>Nuestra formación</span>
       </p>
       <p class="font-display font-light text-2xl lg:text-4xl text-ink-900 leading-[1.2] text-balance max-w-3xl">
-        Formar discípulos que <span class="italic text-spirit-500">renacen, crecen y son enviados</span> a reflejar a Cristo en cada nación.
+        Acompañamos cada paso: del <span class="italic text-spirit-500">nuevo nacimiento al servicio</span>, con procesos de discipulado que forman el carácter de Cristo.
       </p>
       <a href="#proceso" class="btn-outline shrink-0 self-start lg:self-center" data-cursor="hover">
         <span>Conoce el proceso</span>

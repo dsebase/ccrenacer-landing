@@ -1,10 +1,29 @@
 ---
-// PLACEHOLDER: reemplazar con datos reales
+// Cuentas bancarias oficiales de la iglesia + QR para pagos móviles.
+// Editables aquí — placeholders "XXXX" reemplazables cuando llegue el dato oficial.
 const cuentas = [
-  { banco: "BCP", tipo: "Cta. Corriente Soles", numero: "194-XXXXXXX-X-XX" },
-  { banco: "Interbank", tipo: "Cta. Soles", numero: "200-XXXXXXX-X-XX" },
-  { banco: "Yape / Plin", tipo: "Móvil", numero: "+51 931797790" },
+  {
+    id: "bbva-soles",
+    banco: "BBVA",
+    tipo: "Cuenta Corriente Soles",
+    moneda: "S/",
+    numero: "0011-XXXX-XXXXXXXXX",
+    cci: "011-XXX-XXXXXXXXXXXX-XX",
+  },
+  {
+    id: "bbva-dolares",
+    banco: "BBVA",
+    tipo: "Cuenta Corriente Dólares",
+    moneda: "US$",
+    numero: "0011-XXXX-XXXXXXXXX",
+    cci: "011-XXX-XXXXXXXXXXXX-XX",
+  },
 ]
+
+// Ruta del QR (reemplazar por el QR real de Yape / Plin cuando esté disponible).
+// Colocar el archivo en: landing/public/img/qr-ofrenda.png
+const qrSrc = "/img/qr-ofrenda.png"
+const qrNumero = "+51 931 797 790"
 ---
 
 <section id="dar" class="relative py-32 lg:py-44 bg-ink-950 text-paper-50 overflow-hidden grain grain-dark">
@@ -36,33 +55,102 @@ const cuentas = [
         </p>
       </div>
 
-      <div class="grid gap-3">
-        {cuentas.map((c) => (
-          <article class="bento bento-dark p-7 flex items-center justify-between gap-6" data-cursor="hover">
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-300 mb-2">
-                {c.banco}
-              </p>
-              <p class="text-sm text-paper-100/55 mb-1">{c.tipo}</p>
-              <p class="font-display text-2xl text-paper-50 tracking-[-0.02em]">{c.numero}</p>
+      <div class="grid gap-4">
+        {/* Cabecera compartida: BBVA Soles + BBVA Dólares como títulos lado a lado */}
+        <div class="grid sm:grid-cols-2 gap-4 border-b border-paper-50/10 pb-3">
+          {cuentas.map((c) => (
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center justify-center min-w-[42px] px-2 py-0.5 rounded-full bg-spirit-500 text-ink-950 font-mono text-[10px] font-bold tracking-[0.15em]">
+                {c.moneda}
+              </span>
+              <div class="min-w-0">
+                <p class="font-display text-lg lg:text-xl text-paper-50 tracking-[-0.01em] leading-none">
+                  {c.banco} <span class="text-paper-100/60 font-light">{c.tipo.replace('Cuenta Corriente ', '')}</span>
+                </p>
+              </div>
             </div>
+          ))}
+        </div>
+
+        {/* Cuentas BBVA (números + CCI + botón copiar) */}
+        <div class="grid sm:grid-cols-2 gap-4">
+          {cuentas.map((c) => (
+            <article class="bento bento-dark p-6 lg:p-7" data-cursor="hover">
+              <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0 flex-1">
+                  <p class="font-mono text-[9px] uppercase tracking-[0.3em] text-paper-100/45 mb-1.5">
+                    Cta. Corriente
+                  </p>
+                  <p class="font-display text-xl lg:text-2xl text-paper-50 tracking-[-0.02em] break-all">
+                    {c.numero}
+                  </p>
+                  <div class="mt-4 pt-4 border-t border-paper-50/10">
+                    <p class="font-mono text-[9px] uppercase tracking-[0.3em] text-paper-100/45 mb-1">CCI</p>
+                    <p class="text-xs text-paper-100/75 break-all">{c.cci}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  data-copy={c.numero}
+                  class="shrink-0 w-11 h-11 rounded-full border border-paper-50/20 flex items-center justify-center text-paper-100 hover:bg-spirit-500 hover:text-ink-950 hover:border-spirit-500 transition-all"
+                  aria-label={`Copiar ${c.numero}`}
+                  data-cursor="hover"
+                >
+                  <svg class="i-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="9" y="9" width="13" height="13" rx="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  <svg class="i-check hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {/* Bloque QR — pago móvil (simplificado) */}
+        <article class="bento bento-dark p-7 lg:p-8 grid sm:grid-cols-[auto_1fr] gap-6 sm:gap-8 items-center" data-cursor="hover">
+          <div class="mx-auto sm:mx-0 w-40 h-40 sm:w-44 sm:h-44 rounded-2xl bg-paper-50 p-3 flex items-center justify-center shrink-0">
+            <img
+              src={qrSrc}
+              alt="Código QR para ofrenda"
+              class="w-full h-full object-contain qr-img"
+              loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+            />
+            <div class="hidden w-full h-full flex-col items-center justify-center gap-2 text-ink-400 text-center px-2">
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <path d="M14 14h3v3h-3zM17 17h4v4h-4zM14 20h3" />
+              </svg>
+              <span class="font-mono text-[9px] uppercase tracking-[0.25em]">QR pendiente</span>
+            </div>
+          </div>
+
+          <div class="min-w-0 text-center sm:text-left">
+            <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-300 mb-3">
+              Pago móvil · QR
+            </p>
+            <p class="font-display text-2xl lg:text-3xl text-paper-50 tracking-[-0.02em]">
+              {qrNumero}
+            </p>
             <button
               type="button"
-              data-copy={c.numero}
-              class="shrink-0 w-12 h-12 rounded-full border border-paper-50/20 flex items-center justify-center text-paper-100 hover:bg-spirit-500 hover:text-ink-950 hover:border-spirit-500 transition-all"
-              aria-label={`Copiar ${c.numero}`}
+              data-copy={qrNumero}
+              class="mt-4 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-paper-100/85 hover:text-spirit-300 transition-colors"
               data-cursor="hover"
             >
-              <svg class="i-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect x="9" y="9" width="13" height="13" rx="2" />
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
               </svg>
-              <svg class="i-check hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 6 9 17l-5-5" />
-              </svg>
+              Copiar número
             </button>
-          </article>
-        ))}
+          </div>
+        </article>
       </div>
     </div>
   </div>
@@ -74,7 +162,6 @@ const cuentas = [
         try {
           await navigator.clipboard.writeText(value)
         } catch {
-          // Fallback para navegadores/contextos sin clipboard API
           const ta = document.createElement("textarea")
           ta.value = value
           ta.style.position = "fixed"
@@ -84,17 +171,22 @@ const cuentas = [
           try { document.execCommand("copy") } catch {}
           document.body.removeChild(ta)
         }
-        // Feedback visual: muestra el check ~1.5s
         const copy = btn.querySelector(".i-copy")
         const check = btn.querySelector(".i-check")
-        copy?.classList.add("hidden")
-        check?.classList.remove("hidden")
-        btn.classList.add("!bg-spirit-500", "!text-ink-950", "!border-spirit-500")
-        setTimeout(() => {
-          copy?.classList.remove("hidden")
-          check?.classList.add("hidden")
-          btn.classList.remove("!bg-spirit-500", "!text-ink-950", "!border-spirit-500")
-        }, 1500)
+        if (copy && check) {
+          copy.classList.add("hidden")
+          check.classList.remove("hidden")
+          btn.classList.add("!bg-spirit-500", "!text-ink-950", "!border-spirit-500")
+          setTimeout(() => {
+            copy.classList.remove("hidden")
+            check.classList.add("hidden")
+            btn.classList.remove("!bg-spirit-500", "!text-ink-950", "!border-spirit-500")
+          }, 1500)
+        } else {
+          const original = btn.innerHTML
+          btn.innerHTML = "<span>Copiado ✓</span>"
+          setTimeout(() => (btn.innerHTML = original), 1500)
+        }
       })
     })
   </script>

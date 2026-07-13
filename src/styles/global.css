@@ -62,6 +62,17 @@
     color: inherit;
     text-shadow: none;
   }
+  /* Restaurar selección VISIBLE en campos de trabajo: el usuario necesita
+     ver qué está copiando/cortando. Sin esto, ::selection transparente
+     hacía que triple-click o Ctrl+A pareciera "no funcionar" en el textarea
+     de contacto. */
+  input::selection,
+  textarea::selection,
+  [contenteditable]::selection {
+    background: var(--color-spirit-500);
+    color: var(--color-paper-50);
+    text-shadow: none;
+  }
   /* Tipografía global Fraunces optical size + tracking */
   h1, h2, h3 {
     font-family: var(--font-display);

@@ -1,8 +1,6 @@
 ---
 import { images } from "../lib/images"
 
-const whatsapp = import.meta.env.PUBLIC_WHATSAPP_URL ?? "https://wa.me/51999999999"
-
 const inputClass =
   "w-full bg-transparent border-b border-ink-900/15 focus:border-ink-900 px-0 py-3 text-ink-900 placeholder-ink-300 focus:outline-none transition-colors"
 const labelClass =
@@ -47,19 +45,13 @@ const paises = [
         <ul class="grid grid-cols-2 gap-6 pb-8 mb-8 border-b border-ink-900/10">
           <li>
             <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-500 mb-2">Correo</p>
-            <a href="mailto:info@ccrenacer.pe" class="font-display text-lg lg:text-xl text-ink-900 link-underline" data-cursor="hover">
-              info@ccrenacer.pe
+            <a href="mailto:info@ccrenacer.com" class="font-display text-lg lg:text-xl text-ink-900 link-underline break-all" data-cursor="hover">
+              info@ccrenacer.com
             </a>
           </li>
           <li>
-            <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-500 mb-2">WhatsApp</p>
-            <a href={whatsapp} target="_blank" rel="noopener" class="font-display text-lg lg:text-xl text-ink-900 link-underline" data-cursor="hover">
-              Escribir →
-            </a>
-          </li>
-          <li class="col-span-2">
             <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-500 mb-2">Dirección</p>
-            <p class="font-display text-lg lg:text-xl text-ink-900">
+            <p class="font-display text-lg lg:text-xl text-ink-900 leading-snug">
               Manuel Aguila Durand 280, Surco — Perú
             </p>
           </li>
@@ -110,6 +102,7 @@ const paises = [
             <select id="motivo" name="motivo" class={inputClass}>
               <option value="primera-vez">Es mi primera vez</option>
               <option value="oracion">Necesito oración</option>
+              <option value="iec">Iglesia en Casa (IEC)</option>
               <option value="bautismo">Quiero bautizarme</option>
               <option value="ministerio">Servir en un ministerio</option>
               <option value="otro">Otro</option>

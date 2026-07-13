@@ -3,7 +3,7 @@ import react from '@astrojs/react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  site: 'https://ccrenacer.pe',
+  site: 'https://ccrenacer.com',
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],

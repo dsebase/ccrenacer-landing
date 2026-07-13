@@ -4,23 +4,27 @@ import { useEffect, useMemo, useRef } from "react"
 const principios = [
   {
     n: "01",
-    t: "Toda persona necesita un nuevo nacimiento.",
-    d: "No basta con creer o asistir. El Reino se entra por una puerta nueva, dada desde arriba.",
+    t: "Nuestra misión.",
+    d: "Formar discípulos que renacen, crecen y son enviados a reflejar a Cristo en cada nación.",
+    highlight: true,
   },
   {
     n: "02",
-    t: "Cristo es la única puerta.",
-    d: "No proclamamos un método, una experiencia ni un programa. Proclamamos a Cristo crucificado y resucitado.",
+    t: "Nuestra visión.",
+    d: "Ver una generación que renace y transforma su ciudad y las naciones para la gloria de Cristo.",
+    highlight: true,
   },
   {
     n: "03",
     t: "La iglesia existe para los de afuera.",
     d: "Vivimos abiertos: a los que dudan, a los que vuelven, a los que aún no escucharon. Ningún renacido nace para sí mismo.",
+    highlight: false,
   },
   {
     n: "04",
     t: "Cada renacido es enviado.",
     d: "El nuevo nacimiento no termina en nosotros. Continúa cuando vamos al barrio, a la ciudad, a las naciones.",
+    highlight: false,
   },
 ]
 
@@ -158,7 +162,9 @@ export default function Manifiesto({ videoSrc, videoWebm, poster }: ManifiestoPr
           </motion.aside>
         </div>
 
-        {/* Principios numerados */}
+        {/* Principios numerados. Los primeros dos (Misión + Visión) se resaltan
+            con fondo tenue, texto en italic + spirit-400 y swap de colores en hover
+            — mismo lenguaje visual que el cierre "Renacer no es metáfora". */}
         <ol className="grid sm:grid-cols-2 gap-px bg-ink-700/50 border border-ink-700/50 rounded-[28px] overflow-hidden">
           {principios.map((p, i) => (
             <motion.li
@@ -171,22 +177,54 @@ export default function Manifiesto({ videoSrc, videoWebm, poster }: ManifiestoPr
                 delay: i * 0.12,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="group relative bg-ink-950 p-8 lg:p-12 transition-colors duration-700 hover:bg-ink-900"
+              className={`group relative p-8 lg:p-12 transition-colors duration-700 ${
+                p.highlight
+                  ? "bg-gradient-to-br from-ink-900 via-ink-950 to-ink-900 hover:from-ink-950 hover:via-ink-900 hover:to-ink-950"
+                  : "bg-ink-950 hover:bg-ink-900"
+              }`}
               data-cursor="hover"
             >
+              {p.highlight && (
+                <span
+                  className="absolute top-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-spirit-400/70 to-transparent"
+                  aria-hidden="true"
+                />
+              )}
               <div className="flex items-start gap-6 lg:gap-8">
-                <span className="font-mono text-xs tracking-[0.3em] text-spirit-400 mt-2 shrink-0">
+                <span
+                  className={`font-mono text-xs tracking-[0.3em] mt-2 shrink-0 ${
+                    p.highlight ? "text-spirit-300" : "text-spirit-400"
+                  }`}
+                >
                   {p.n}
                 </span>
                 <div className="flex-1">
-                  <h3 className="font-display font-light text-2xl lg:text-3xl text-paper-50 leading-[1.15] tracking-[-0.015em] mb-4 text-balance">
-                    {p.t}
-                  </h3>
-                  <p className="text-ink-300 leading-relaxed text-pretty max-w-md">
+                  {p.highlight ? (
+                    <h3 className="font-display italic font-light text-3xl lg:text-4xl leading-[1.1] tracking-[-0.02em] mb-5 text-balance cursor-default">
+                      <span className="text-spirit-400 transition-colors duration-500 group-hover:text-paper-50">
+                        {p.t}
+                      </span>
+                    </h3>
+                  ) : (
+                    <h3 className="font-display font-light text-2xl lg:text-3xl text-paper-50 leading-[1.15] tracking-[-0.015em] mb-4 text-balance">
+                      {p.t}
+                    </h3>
+                  )}
+                  <p
+                    className={`leading-relaxed text-pretty max-w-md ${
+                      p.highlight ? "text-paper-100/85" : "text-ink-300"
+                    }`}
+                  >
                     {p.d}
                   </p>
                 </div>
-                <span className="text-spirit-400/50 group-hover:text-spirit-400 group-hover:rotate-0 transition-all duration-500 rotate-[-30deg] shrink-0 mt-2">
+                <span
+                  className={`transition-all duration-500 rotate-[-30deg] group-hover:rotate-0 shrink-0 mt-2 ${
+                    p.highlight
+                      ? "text-spirit-400 group-hover:text-paper-50"
+                      : "text-spirit-400/50 group-hover:text-spirit-400"
+                  }`}
+                >
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M7 17L17 7M9 7h8v8" />
                   </svg>

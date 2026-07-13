@@ -85,7 +85,7 @@ export default function CTASistema({ sistemaUrl, bgImg }: CTAProps) {
                 transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                 className="inline-block w-1.5 h-1.5 rounded-full bg-spirit-400"
               />
-              sistema.ccrenacer.pe · acceso controlado
+              sistema.ccrenacer.com · acceso controlado
             </div>
           </motion.div>
 

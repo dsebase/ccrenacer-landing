@@ -43,6 +43,11 @@ export const images = {
 
   // Contacto
   contacto: "/img/contacto.png",
+
+  // Iglesia en Casa (collage sección 07)
+  iec1: "/img/iec_1.jpg",
+  iec2: "/img/iec_2.jpg",
+  iec3: "/img/iec_3.jpg",
 }
 
 // Video de fondo del Manifiesto.
