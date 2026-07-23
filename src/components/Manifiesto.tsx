@@ -253,6 +253,24 @@ function PrincipioCard({
   const my = useMotionValue(-400)
   const spotlight = useMotionTemplate`radial-gradient(440px circle at ${mx}px ${my}px, rgba(23,156,218,0.18), transparent 72%)`
   const [tip, setTip] = useState<{ ref: string; x: number; y: number } | null>(null)
+  // Desktop (con hover) → tooltip; móvil (sin hover) → panel inferior.
+  const [canHover, setCanHover] = useState(true)
+
+  useEffect(() => {
+    setCanHover(window.matchMedia("(hover: hover)").matches)
+  }, [])
+
+  // Cerrar el versículo al hacer scroll o al rotar/redimensionar.
+  useEffect(() => {
+    if (!tip) return
+    const close = () => setTip(null)
+    window.addEventListener("scroll", close, { passive: true })
+    window.addEventListener("resize", close)
+    return () => {
+      window.removeEventListener("scroll", close)
+      window.removeEventListener("resize", close)
+    }
+  }, [tip])
 
   function handleMove(e: ReactMouseEvent<HTMLLIElement>) {
     const r = e.currentTarget.getBoundingClientRect()
@@ -362,13 +380,13 @@ function PrincipioCard({
         </div>
       </div>
 
-      {/* Tooltip del versículo — renderizado en un portal (position: fixed),
-          fuera del flujo de la card: no ocupa layout → no hay reflow ni
-          repintado del video → aparece/desaparece con un fundido suave. */}
+      {/* Versículo emergente (portal). Desktop: tooltip que sigue al chip.
+          Móvil: panel inferior (bottom sheet) con botón de cerrar y fondo
+          tocable; se cierra también al hacer scroll. */}
       {typeof document !== "undefined" &&
         createPortal(
           <AnimatePresence>
-            {tip && versiculos[tip.ref] && (
+            {tip && versiculos[tip.ref] && canHover && (
               <motion.div
                 key="verse-tip"
                 initial={{ opacity: 0 }}
@@ -391,6 +409,47 @@ function PrincipioCard({
                 <span className="block font-display italic text-sm leading-relaxed text-ink-800">
                   {versiculos[tip.ref]}
                 </span>
+              </motion.div>
+            )}
+
+            {tip && versiculos[tip.ref] && !canHover && (
+              <motion.div
+                key="verse-sheet"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-[60] flex items-end bg-ink-950/70"
+                onClick={() => setTip(null)}
+              >
+                <motion.div
+                  initial={{ y: "100%" }}
+                  animate={{ y: 0 }}
+                  exit={{ y: "100%" }}
+                  transition={{ type: "tween", duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className="w-full rounded-t-3xl bg-paper-50 p-6 pb-9 shadow-2xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-ink-900/15" />
+                  <div className="mb-3 flex items-start justify-between gap-4">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-spirit-600 pt-1.5">
+                      {tip.ref}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setTip(null)}
+                      aria-label="Cerrar"
+                      className="shrink-0 flex h-9 w-9 items-center justify-center rounded-full border border-ink-900/15 text-ink-500 transition-colors active:bg-ink-900 active:text-paper-50"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <p className="font-display italic text-base leading-relaxed text-ink-800 text-pretty">
+                    {versiculos[tip.ref]}
+                  </p>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>,
