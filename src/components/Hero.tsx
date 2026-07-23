@@ -145,7 +145,7 @@ export default function Hero({ sistemaUrl, heroImg }: HeroProps) {
             { k: "Ministerios", v: "6", c: "Áreas activas" },
             { k: "Año", v: "2023 - Hoy", c: "Visión vigente" },
           ].map((s) => (
-            <div key={s.k}>
+            <div key={s.k} className="text-center sm:text-left">
               <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-3">
                 {s.k}
               </p>
