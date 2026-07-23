@@ -585,7 +585,7 @@ function BookCover({ n, img }: { n: string; img: string }) {
     <div
       role="img"
       aria-label={`Portada Renacer ${n}`}
-      className="w-full sm:w-44 aspect-[2/3] rounded-lg overflow-hidden shadow-md bg-paper-200 shrink-0"
+      className="w-36 sm:w-44 mx-auto sm:mx-0 aspect-[2/3] rounded-lg overflow-hidden shadow-md bg-paper-200 shrink-0"
       style={{
         backgroundImage: `url("${img}")`,
         backgroundSize: "305% auto",
@@ -646,7 +646,7 @@ function RenacerModal() {
                 {/* Contenido */}
                 <div className="absolute inset-0 flex items-end sm:items-center justify-center p-0 sm:p-6 pointer-events-none">
                   <motion.div
-                    className="relative w-full sm:max-w-3xl bg-paper-50 rounded-t-[28px] sm:rounded-[28px] shadow-2xl max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden pointer-events-auto"
+                    className="relative w-full sm:max-w-3xl bg-paper-50 rounded-t-[28px] sm:rounded-[28px] shadow-2xl max-h-[88dvh] sm:max-h-[85dvh] flex flex-col overflow-hidden pointer-events-auto"
                     initial={{ opacity: 0, y: 60, scale: 0.97 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 30, scale: 0.98 }}
@@ -716,7 +716,7 @@ function RenacerModal() {
                     </div>
 
                     {/* Footer */}
-                    <div className="p-6 lg:p-8 border-t border-ink-900/10 bg-paper-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="p-6 lg:p-8 pb-[max(1.5rem,env(safe-area-inset-bottom))] border-t border-ink-900/10 bg-paper-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <p className="text-ink-500 text-sm max-w-md leading-snug">
                         <span className="text-ink-900 font-medium">¿Quieres empezar tu proceso?</span>{" "}
                         Inscríbete en la próxima edición del discipulado.

@@ -38,7 +38,7 @@ export default function Hero({ sistemaUrl, heroImg }: HeroProps) {
               <span>Lima · Perú</span>
             </motion.p>
 
-            <h1 className="font-display font-light text-[clamp(3rem,8.5vw,9rem)] leading-[0.95] text-ink-900 tracking-[-0.03em]">
+            <h1 className="font-display font-light text-[clamp(3rem,8.5vw,9rem)] leading-[0.95] text-ink-900 tracking-[-0.03em] text-center lg:text-left">
               <WaveLine text="Renacer" delay={2.5} />
               <span className="block">
                 <WaveLine text="para ver" delay={2.7} />
