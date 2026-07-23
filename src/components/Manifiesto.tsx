@@ -318,7 +318,12 @@ function PrincipioCard({
           <p className="text-paper-100/85 leading-relaxed text-[15px] lg:text-base text-justify hyphens-auto">
             {p.d}
           </p>
-          <div className="mt-6" onMouseLeave={() => setTip(null)}>
+          <div
+            className="mt-6"
+            onPointerLeave={(e) => {
+              if (e.pointerType === "mouse") setTip(null)
+            }}
+          >
             <span className="block font-mono text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-3">
               / Fundamento bíblico
             </span>
@@ -331,11 +336,16 @@ function PrincipioCard({
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.3 + j * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                  onMouseEnter={(e) => setTip(tipFor(r, e.currentTarget))}
-                  onFocus={(e) => setTip(tipFor(r, e.currentTarget))}
-                  onClick={(e) =>
-                    setTip((t) => (t?.ref === r ? null : tipFor(r, e.currentTarget)))
-                  }
+                  // Desktop: mostrar al pasar el mouse (solo pointerType mouse).
+                  onPointerEnter={(e) => {
+                    if (e.pointerType === "mouse") setTip(tipFor(r, e.currentTarget))
+                  }}
+                  // Móvil/click: toggle. Leemos currentTarget de forma SÍNCRONA
+                  // (fuera del updater) — si no, React lo pone null y crashea.
+                  onClick={(e) => {
+                    const next = tipFor(r, e.currentTarget)
+                    setTip((t) => (t?.ref === r ? null : next))
+                  }}
                   aria-expanded={tip?.ref === r}
                   data-cursor="hover"
                   className={`rounded-full border px-3 py-1 font-mono text-[10px] tracking-wide transition-all duration-300 ${
