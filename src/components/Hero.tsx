@@ -80,15 +80,17 @@ export default function Hero({ sistemaUrl, heroImg }: HeroProps) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, delay: 2.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative h-[60vh] lg:h-[78vh] img-frame rounded-[28px] overflow-hidden"
+            className="group relative h-[60vh] lg:h-[78vh] img-frame rounded-[28px] overflow-hidden"
           >
-            <motion.img
-              src={heroImg}
-              alt="Adoración Renacer"
-              style={{ y: imgY, scale: imgScale }}
-              className="absolute inset-0 w-full h-full object-cover"
-              loading="eager"
-            />
+            <div className="absolute inset-0 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]">
+              <motion.img
+                src={heroImg}
+                alt="Adoración Renacer"
+                style={{ y: imgY, scale: imgScale }}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="eager"
+              />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-ink-900/40 via-transparent to-transparent" />
             <motion.div
               initial={{ opacity: 0 }}

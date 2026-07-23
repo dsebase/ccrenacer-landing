@@ -207,6 +207,110 @@
     box-shadow: 0 14px 40px -10px rgb(23 156 218 / 0.45);
   }
 
+  /* Botón CLARO con el mismo relleno animado que btn-primary — para usar
+     sobre fondos oscuros (VerseCards, secciones dark). */
+  .btn-light {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.95rem 1.7rem;
+    background: var(--color-paper-50);
+    color: var(--color-ink-900);
+    font-weight: 500;
+    font-size: 0.92rem;
+    border-radius: 999px;
+    transition: all 0.4s var(--ease-out-expo);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-light::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--color-spirit-500);
+    transform: translateY(101%);
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+  .btn-light > * {
+    position: relative;
+    z-index: 1;
+  }
+  .btn-light:hover {
+    transform: translateY(-2px);
+    color: var(--color-ink-950);
+  }
+  .btn-light:hover::before {
+    transform: translateY(0);
+  }
+
+  /* Modificador de tamaño — combinar con btn-primary / btn-light / btn-outline.
+     Ej: class="btn-primary btn-compact". Debe ir DESPUÉS en el cascade. */
+  .btn-compact {
+    padding: 0.5rem 1.15rem;
+    font-size: 0.78rem;
+    gap: 0.4rem;
+  }
+
+  /* Botón social — relleno animado con el color de marca (via --btn-fill),
+     el texto se mantiene claro para buen contraste sobre cualquier color. */
+  .btn-social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.5rem;
+    min-width: 168px;
+    background: var(--color-ink-900);
+    color: var(--color-paper-50);
+    font-weight: 500;
+    font-size: 0.875rem;
+    border-radius: 999px;
+    transition: transform 0.4s var(--ease-out-expo);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-social::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--btn-fill, var(--color-spirit-500));
+    transform: translateY(101%);
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+  .btn-social > * {
+    position: relative;
+    z-index: 1;
+  }
+  .btn-social:hover {
+    transform: translateY(-2px);
+  }
+  .btn-social:hover::before {
+    transform: translateY(0);
+  }
+
+  /* Outline para fondos OSCUROS — invierte a claro en hover (equivalente a
+     btn-outline pero para secciones dark). */
+  .btn-outline-invert {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.95rem 1.7rem;
+    color: var(--color-paper-100);
+    background: transparent;
+    font-weight: 500;
+    font-size: 0.92rem;
+    border: 1px solid rgb(255 255 255 / 0.25);
+    border-radius: 999px;
+    transition: all 0.4s var(--ease-out-expo);
+  }
+  .btn-outline-invert:hover {
+    background: var(--color-paper-50);
+    color: var(--color-ink-950);
+    border-color: var(--color-paper-50);
+    transform: translateY(-2px);
+  }
+
   /* ─── Marquee ──────────────────────────────────────────────── */
   .marquee {
     display: flex;
@@ -358,6 +462,23 @@
     100% { transform: translate3d(4%, 3%, 0) rotate(8deg) scale(1.08); }
   }
 
+  /* Variante intensa — para fondos oscuros donde la aurora es protagonista
+     (en-vivo, Dar/Ofrenda, footer). Más saturada, menos blur, más movimiento.
+     Se usa junto a .aurora-liquid: .aurora-liquid.aurora-strong */
+  .aurora-strong {
+    background:
+      radial-gradient(52% 52% at 18% 28%, rgb(23 156 218 / 0.65), transparent 60%),
+      radial-gradient(46% 46% at 82% 42%, rgb(17 160 192 / 0.55), transparent 66%),
+      radial-gradient(44% 44% at 50% 82%, rgb(124 205 236 / 0.42), transparent 66%);
+    filter: blur(52px);
+    animation: aurora-shift-strong 16s ease-in-out infinite alternate;
+  }
+  @keyframes aurora-shift-strong {
+    0%   { transform: translate3d(-6%, -4%, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate3d(3%, 3%, 0) rotate(7deg) scale(1.14); }
+    100% { transform: translate3d(7%, 6%, 0) rotate(13deg) scale(1.2); }
+  }
+
   /* ─── Grano cinematográfico ────────────────────────────────── */
   .grain::before {
     content: "";
@@ -379,14 +500,13 @@
   }
 }
 
-/* ─── Reduced motion ─────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  .marquee {
-    animation: none;
-  }
-}
+/* ─── Reduced motion ─────────────────────────────────────────────
+   Decisión de diseño (a pedido): las animaciones son parte de la
+   identidad del sitio y deben verse SIEMPRE, esté el visitante en
+   ahorro de batería o con "movimiento reducido" activado en el SO.
+   Por eso NO degradamos animaciones/transiciones aquí.
+   Nota de accesibilidad: usuarios con sensibilidad vestibular (mareos)
+   verán igualmente todo el movimiento. Si en el futuro se quiere un
+   punto medio, reintroducir un bloque @media (prefers-reduced-motion)
+   limitado solo a los movimientos más agresivos.
+──────────────────────────────────────────────────────────────── */

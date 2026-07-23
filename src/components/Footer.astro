@@ -10,7 +10,11 @@ const whatsapp = import.meta.env.PUBLIC_WHATSAPP_URL ?? "#"
 const year = new Date().getFullYear()
 ---
 
-<footer class="relative bg-ink-950 text-paper-100 grain grain-dark">
+<footer class="relative isolate bg-ink-950 text-paper-100 grain grain-dark">
+  {/* Aurora de fondo */}
+  <div class="absolute inset-0 -z-10 opacity-70 overflow-hidden pointer-events-none">
+    <div class="aurora-liquid aurora-strong"></div>
+  </div>
   <Marquee variant="dark" />
 
   <div class="mx-auto max-w-[1400px] px-6 lg:px-10 py-20 lg:py-28">

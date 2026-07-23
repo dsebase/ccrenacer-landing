@@ -1,5 +1,43 @@
-import { motion, useScroll, useTransform, useSpring, type MotionValue } from "motion/react"
-import { useRef } from "react"
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useSpring,
+  type MotionValue,
+} from "motion/react"
+import { useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
+
+// ── Datos del modal "Conocer Renacer I a III" (Paso I) ───────────────
+// Portadas en: landing/public/img/rncri.PNG · rncrii.PNG · rncriii.PNG (respetar mayúsculas)
+const renacerBooks = [
+  {
+    n: "1",
+    t: "Mi encuentro con Jesús",
+    img: "/img/rncri.PNG",
+    d: `Tiene como punto de partida el aceptar que necesitamos una nueva vida y el inicio de un cambio radical. En toda comunidad de fe es llamado un "nuevo nacimiento". Hablar sobre el nuevo nacimiento es tratar de comprender el pensamiento de la generación en este siglo XXI, donde la mayoría de las personas hablan de las emociones y de cada experiencia o sensación que tienen en la vida. "Mi encuentro con Jesús" es más que una experiencia, emoción y sensación especial. Este encuentro nos lleva a pensar en un cambio interior y profundo, que solo ocurre cuando llegamos a Él.`,
+  },
+  {
+    n: "2",
+    t: "De la mano con Jesús",
+    img: "/img/rncrii.PNG",
+    d: `Una de las razones por las cuales decidimos poner el nombre a este segundo manual de discipulado, "De la mano con Jesús", es justamente por esta nueva y hermosa etapa que tenemos como hijos de Dios: nos permite saber que sin Él es imposible caminar. Su guía nos da seguridad. Decidir depender de nuestro Señor Jesús es cada día dar a conocer el gran amor de Dios y afirmar nuestros pasos en una nueva vida en Cristo. Nos agrada saber que Dios siempre ha estado pendiente de nosotros: "Porque yo, Jehová, soy tu Dios, quien te sostiene de la mano derecha y te dice: No temas, yo te ayudaré".`,
+  },
+  {
+    n: "3",
+    t: "Creciendo con Jesús",
+    img: "/img/rncriii.PNG",
+    d: `Es importante reconocer que, cuando nos referimos a crecer con Jesús, implica acción, continuidad y progreso. Cuando caminamos con alguien, pasamos tiempo con la persona y afirmamos una buena relación de amistad. Imaginar la importancia y lo sublime que es caminar y crecer con Jesús nos lleva a comprender que nunca estamos solos. Crecer con Jesús es mirar la vida cristiana desde una realidad Cristo-céntrica. Caminemos seguros bajo el abrigo del Altísimo. Gracia y paz.`,
+  },
+]
+
+const cronograma = [
+  "Agosto – Octubre 2026",
+  "Febrero – Abril 2027",
+  "Junio – Agosto 2027",
+  "Octubre – Diciembre 2027",
+]
 
 interface Stage {
   n: string
@@ -134,11 +172,12 @@ function MobileStages({ stages, total }: { stages: Stage[]; total: number }) {
               <p className="font-mono text-xs uppercase tracking-[0.3em] text-spirit-500 mb-4">
                 Paso {s.n}
               </p>
-              <h3 className="font-display text-4xl leading-[1] text-ink-900 tracking-[-0.025em]">
+              <h3 className="font-display text-3xl leading-[1.03] text-ink-900 tracking-[-0.025em]">
                 {s.title}
                 <span className="block italic text-spirit-500">{s.italic}</span>
               </h3>
-              <p className="mt-5 text-ink-500 leading-relaxed text-pretty">{s.desc}</p>
+              <p className="mt-5 text-ink-500 leading-relaxed text-justify hyphens-auto">{s.desc}</p>
+              {s.n === "I" && <RenacerModal />}
 
               {/* Versículo + CTA */}
               <div className="mt-6 rounded-2xl border border-ink-900/10 bg-paper-100 p-6">
@@ -150,9 +189,9 @@ function MobileStages({ stages, total }: { stages: Stage[]; total: number }) {
                 </blockquote>
                 <a
                   href="#contacto"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-ink-900 text-paper-50 font-mono text-[10px] uppercase tracking-[0.2em]"
+                  className="btn-primary btn-compact"
                 >
-                  {s.cta}
+                  <span>{s.cta}</span>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
                 </a>
               </div>
@@ -204,11 +243,14 @@ function FullStage({
   const numeralOp = useTransform(smooth, [start, fadeIn, fadeOut, end], [isFirst ? 0.18 : 0, 0.18, 0.18, isLast ? 0.18 : 0])
   const numeralSc = useTransform(smooth, [start, fadeIn, fadeOut, end], [isFirst ? 1 : 0.92, 1, 1, isLast ? 1 : 1.03])
   const verseY = useTransform(smooth, [start, fadeIn, fadeOut, end], [isFirst ? 0 : 20, 0, 0, isLast ? 0 : -20])
+  // Solo la etapa realmente visible captura clics; las difuminadas dejan
+  // pasar el puntero (si no, la última etapa tapa a las demás y nada es clickeable).
+  const stagePE = useTransform(stageOp, (o) => (o > 0.5 ? "auto" : "none"))
 
   const step = index + 1
 
   return (
-    <motion.div style={{ opacity: stageOp }} className="absolute inset-0">
+    <motion.div style={{ opacity: stageOp, pointerEvents: stagePE }} className="absolute inset-0">
       {variant === "A" && (
         <LayoutA
           stage={stage}
@@ -271,16 +313,17 @@ function TextBlock({
 
   return (
     <div className={`flex flex-col justify-center h-full ${align === "right" ? "items-end text-right" : ""}`}>
-      <p className={`font-mono text-xs uppercase tracking-[0.3em] ${accent} mb-6`}>
+      <p className={`font-mono text-xs uppercase tracking-[0.3em] ${accent} mb-3`}>
         Paso {stage.n}
       </p>
-      <h3 className={`font-display text-[clamp(2.5rem,5.5vw,6rem)] leading-[1] tracking-[-0.025em] ${text}`}>
+      <h3 className={`font-display text-[clamp(1.5rem,3vw,3rem)] leading-[1.02] tracking-[-0.025em] ${text}`}>
         {stage.title}
         <span className={`block italic ${accent}`}>{stage.italic}</span>
       </h3>
-      <p className={`mt-8 text-lg leading-relaxed max-w-md text-pretty ${muted}`}>
+      <p className={`mt-4 text-sm leading-[1.65] max-w-xl text-justify hyphens-auto ${muted}`}>
         {stage.desc}
       </p>
+      {stage.n === "I" && <RenacerModal />}
     </div>
   )
 }
@@ -344,10 +387,10 @@ function VerseCard({ stage }: { stage: Stage }) {
       </div>
       <a
         href="#contacto"
-        className="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-paper-50 text-ink-900 font-mono text-[10px] uppercase tracking-[0.2em] hover:bg-spirit-500 transition-colors"
+        className="btn-light btn-compact shrink-0"
         data-cursor="hover"
       >
-        {stage.cta}
+        <span>{stage.cta}</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M5 12h14M13 5l7 7-7 7" />
         </svg>
@@ -490,13 +533,14 @@ function LayoutC({
       <div className="absolute inset-0 bg-gradient-to-tr from-ink-950 via-ink-950/55 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink-950/60" />
 
-      {/* Numeral gigante decorativo */}
+      {/* Numeral gigante decorativo — posicionado dentro del marco (right/​top
+          positivos) para que el "III" no se corte y se lea completo. */}
       <motion.div
         style={{ opacity: numeralOp, scale: numeralSc }}
-        className="absolute -bottom-20 -right-10 lg:-bottom-24 lg:-right-20 pointer-events-none"
+        className="absolute top-6 right-6 lg:top-10 lg:right-12 pointer-events-none"
         aria-hidden
       >
-        <span className="font-display italic font-light text-paper-50 text-[40vw] lg:text-[30vw] leading-none">
+        <span className="font-display italic font-light text-paper-50 text-[22vw] lg:text-[15vw] leading-none">
           {stage.n}
         </span>
       </motion.div>
@@ -512,14 +556,14 @@ function LayoutC({
         className="absolute bottom-8 left-6 right-6 lg:bottom-12 lg:left-12 lg:right-12 z-10 grid lg:grid-cols-[1.3fr_1fr] gap-8 items-end"
       >
         <div className="text-paper-50">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-spirit-300 mb-6">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-spirit-300 mb-3">
             Paso {stage.n}
           </p>
-          <h3 className="font-display text-[clamp(2.5rem,6vw,6.5rem)] leading-[1] tracking-[-0.025em]">
+          <h3 className="font-display text-[clamp(1.75rem,3.8vw,3.75rem)] leading-[1.03] tracking-[-0.025em]">
             {stage.title}
             <span className="block italic text-spirit-300">{stage.italic}</span>
           </h3>
-          <p className="mt-6 text-lg text-paper-100/90 leading-relaxed max-w-lg text-pretty">
+          <p className="mt-4 text-sm text-paper-100/90 leading-[1.65] max-w-xl text-justify hyphens-auto">
             {stage.desc}
           </p>
         </div>
@@ -529,5 +573,173 @@ function LayoutC({
         </motion.div>
       </motion.div>
     </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────
+// Portada de libro. Las imágenes son 1920×1080 con la portada real (vertical)
+// pegada arriba-izquierda y el resto en negro; recortamos SOLO la portada
+// con background-size/position para que encaje limpia en el lienzo vertical.
+function BookCover({ n, img }: { n: string; img: string }) {
+  return (
+    <div
+      role="img"
+      aria-label={`Portada Renacer ${n}`}
+      className="w-full sm:w-44 aspect-[2/3] rounded-lg overflow-hidden shadow-md bg-paper-200 shrink-0"
+      style={{
+        backgroundImage: `url("${img}")`,
+        backgroundSize: "305% auto",
+        backgroundPosition: "2% 46%",
+        backgroundRepeat: "no-repeat",
+      }}
+    />
+  )
+}
+
+// ──────────────────────────────────────────────────────────────
+// Modal "Conocer Renacer I a III" — botón + ventana emergente (portal).
+function RenacerModal() {
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false)
+    }
+    document.addEventListener("keydown", onKey)
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.removeEventListener("keydown", onKey)
+      document.body.style.overflow = ""
+    }
+  }, [open])
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="btn-primary btn-compact mt-5 self-start"
+        aria-haspopup="dialog"
+        data-cursor="hover"
+      >
+        <span>Conocer Renacer I a III</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M5 12h14M13 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {open && (
+              <div className="fixed inset-0 z-[120]" role="dialog" aria-modal="true" aria-label="Renacer I a III">
+                {/* Backdrop */}
+                <motion.div
+                  className="absolute inset-0 bg-ink-950/90 backdrop-blur-lg"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  onClick={() => setOpen(false)}
+                />
+                {/* Contenido */}
+                <div className="absolute inset-0 flex items-end sm:items-center justify-center p-0 sm:p-6 pointer-events-none">
+                  <motion.div
+                    className="relative w-full sm:max-w-3xl bg-paper-50 rounded-t-[28px] sm:rounded-[28px] shadow-2xl max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden pointer-events-auto"
+                    initial={{ opacity: 0, y: 60, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 30, scale: 0.98 }}
+                    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-4 p-6 lg:p-8 border-b border-ink-900/10">
+                      <div>
+                        <p className="eyebrow mb-3">
+                          <span>Paso I · Educación Cristiana</span>
+                        </p>
+                        <h3 className="font-display font-light text-2xl lg:text-3xl text-ink-900 tracking-[-0.02em] leading-tight">
+                          Renacer <span className="italic text-spirit-500">I a III</span>
+                        </h3>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setOpen(false)}
+                        className="shrink-0 w-10 h-10 rounded-full border border-ink-900/15 flex items-center justify-center text-ink-500 hover:bg-ink-900 hover:text-paper-50 hover:border-ink-900 transition-all"
+                        aria-label="Cerrar"
+                        data-cursor="hover"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Cuerpo scrollable */}
+                    <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6 space-y-8">
+                      {renacerBooks.map((b) => (
+                        <article key={b.n} className="grid sm:grid-cols-[auto_1fr] gap-5 sm:gap-6 items-start">
+                          <BookCover n={b.n} img={b.img} />
+                          <div>
+                            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-500 mb-2">
+                              Renacer {b.n}
+                            </p>
+                            <h4 className="font-display italic text-xl lg:text-2xl text-ink-900 tracking-[-0.01em] mb-3">
+                              "{b.t}"
+                            </h4>
+                            <p className="text-ink-600 text-sm leading-relaxed text-justify hyphens-auto">
+                              {b.d}
+                            </p>
+                          </div>
+                        </article>
+                      ))}
+
+                      {/* Cronograma */}
+                      <div className="border-t border-ink-900/10 pt-6">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-4">
+                          / Cronograma discipulado Renacer
+                        </p>
+                        <ol className="grid sm:grid-cols-2 gap-3">
+                          {cronograma.map((c, i) => (
+                            <li
+                              key={c}
+                              className="flex items-center gap-3 rounded-2xl border border-ink-900/10 bg-paper-100 px-4 py-3"
+                            >
+                              <span className="shrink-0 w-7 h-7 rounded-full bg-ink-900 text-paper-50 font-mono text-xs flex items-center justify-center">
+                                {i + 1}
+                              </span>
+                              <span className="font-medium text-ink-900 text-sm">{c}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="p-6 lg:p-8 border-t border-ink-900/10 bg-paper-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <p className="text-ink-500 text-sm max-w-md leading-snug">
+                        <span className="text-ink-900 font-medium">¿Quieres empezar tu proceso?</span>{" "}
+                        Inscríbete en la próxima edición del discipulado.
+                      </p>
+                      <a
+                        href="#contacto"
+                        onClick={() => setOpen(false)}
+                        className="btn-primary shrink-0"
+                        data-cursor="hover"
+                      >
+                        <span>Quiero inscribirme</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M5 12h14M13 5l7 7-7 7" />
+                        </svg>
+                      </a>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
+    </>
   )
 }

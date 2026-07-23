@@ -72,7 +72,7 @@ export default function CTASistema({ sistemaUrl, bgImg }: CTAProps) {
               </a>
               <a
                 href="#contacto"
-                className="inline-flex items-center justify-center gap-2 px-7 py-[0.95rem] rounded-full border border-paper-50/20 text-paper-100 font-medium text-[0.92rem] hover:border-spirit-400 hover:text-spirit-300 transition-colors"
+                className="btn-outline-invert"
                 data-cursor="hover"
               >
                 Solicitar acceso

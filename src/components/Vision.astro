@@ -1,41 +1,41 @@
 ---
 import { images } from "../lib/images"
 
-// Grilla bento 4 columnas (en lg). Cuatro pilares alineados en una fila:
-//   [Adoración] [Formación] [Comunidad] [Amor de Cristo]
+// Grilla bento 4 columnas (en lg). Cuatro pilares en una fila:
+//   [Amor de Cristo] [Poder Sobrenatural] [Adoración] [Hacer Discípulos]
 const pilares = [
   {
     n: "01",
-    t: "Adoración",
-    d: "Adoramos en espíritu y verdad como respuesta a quién es Cristo.",
-    img: images.adoracion,
-    cls: "",
-    variant: "dark",
-    image: true,
-  },
-  {
-    n: "02",
-    t: "Formación",
-    d: "Discipulado que forma el carácter de Cristo en cada persona.",
-    img: images.formacion,
-    cls: "",
-    variant: "dark",
-    image: true,
-  },
-  {
-    n: "03",
-    t: "Comunidad",
-    d: "Casas abiertas, mesas compartidas. Familia real, no metáfora.",
+    t: "Amor de Cristo",
+    d: "El amor que recibimos en la cruz nos transforma e impulsa a amar a Dios y al prójimo sin medida.",
     img: images.comunidad,
     cls: "",
     variant: "dark",
     image: true,
   },
   {
+    n: "02",
+    t: "Poder Sobrenatural de Dios",
+    d: "Creemos en un Dios vivo que sana, libera y obra milagros por el poder de su Espíritu Santo.",
+    img: images.misiones,
+    cls: "",
+    variant: "dark",
+    image: true,
+  },
+  {
+    n: "03",
+    t: "Adoración",
+    d: "Adoramos en espíritu y en verdad, rindiendo todo a Cristo como un estilo de vida.",
+    img: images.adoracion,
+    cls: "",
+    variant: "dark",
+    image: true,
+  },
+  {
     n: "04",
-    t: "Amor de Cristo",
-    d: "El amor que recibimos en la cruz nos impulsa a amar sin medida.",
-    img: images.mision,
+    t: "Hacer Discípulos",
+    d: "Formamos seguidores de Jesús que crecen, maduran y son enviados a hacer más discípulos.",
+    img: images.formacion,
     cls: "",
     variant: "dark",
     image: true,
@@ -107,7 +107,7 @@ const variantBase: Record<string, string> = {
           </div>
 
           <div class="relative z-10">
-            <h3 class={`font-display text-4xl lg:text-5xl tracking-[-0.02em] mb-3 ${p.variant === 'dark' || p.variant === 'spirit' ? 'text-paper-50' : 'text-ink-900'} ${p.variant === 'spirit' ? '!text-ink-950' : ''}`}>
+            <h3 class={`font-display text-2xl lg:text-3xl leading-[1.05] tracking-[-0.02em] mb-3 text-balance ${p.variant === 'dark' || p.variant === 'spirit' ? 'text-paper-50' : 'text-ink-900'} ${p.variant === 'spirit' ? '!text-ink-950' : ''}`}>
               {p.t}
             </h3>
             <p class={`text-sm leading-relaxed max-w-[32ch] ${p.variant === 'dark' ? 'text-paper-100/85' : p.variant === 'spirit' ? 'text-ink-950/85' : 'text-ink-500'}`}>
