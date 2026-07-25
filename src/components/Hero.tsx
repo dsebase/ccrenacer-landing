@@ -132,28 +132,6 @@ export default function Hero({ sistemaUrl, heroImg }: HeroProps) {
             </motion.div>
           </motion.div>
         </div>
-
-        {/* Indicadores inferiores */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 3.6 }}
-          className="mt-20 lg:mt-24 grid sm:grid-cols-3 gap-10 border-t border-ink-900/8 pt-10"
-        >
-          {[
-            { k: "Sedes", v: "2", c: "Red nacional" },
-            { k: "Ministerios", v: "6", c: "Áreas activas" },
-            { k: "Año", v: "2023 - Hoy", c: "Visión vigente" },
-          ].map((s) => (
-            <div key={s.k} className="text-center sm:text-left">
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-3">
-                {s.k}
-              </p>
-              <p className="font-display text-5xl text-ink-900 leading-none">{s.v}</p>
-              <p className="text-xs text-ink-500 mt-2">{s.c}</p>
-            </div>
-          ))}
-        </motion.div>
       </div>
     </section>
   )

@@ -229,11 +229,11 @@ export default function Manifiesto({ videoSrc, videoWebm, poster }: ManifiestoPr
           />
           <p className="group font-display italic text-3xl lg:text-5xl text-paper-50 leading-[1.1] text-balance cursor-default">
             <span className="transition-colors duration-500 group-hover:text-spirit-400">
-              Renacer no es metáfora.
+              Renacer; más que una Iglesia
             </span>
             <br />
             <span className="text-spirit-400 transition-colors duration-500 group-hover:text-paper-50">
-              Es nuestra razón de ser.
+              Una relación con Cristo.
             </span>
           </p>
         </motion.div>
