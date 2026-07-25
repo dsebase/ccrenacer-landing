@@ -56,9 +56,9 @@ export const images = {
 // (opcionalmente agregá un .webm en manifiestoVideoWebm para mejor compresión).
 // Si el archivo no existe, se muestra el poster + animaciones igual.
 export const media = {
-  manifiestoVideo: "/video/video_rncr.mp4",
+  manifiestoVideo: "/video/video_rncr_720.mp4",
   // Dejá el webm vacío hasta que tengas el archivo. Si ponés una ruta a un
   // .webm que NO existe, Chrome falla y no cae al mp4 (bug conocido de <source>).
   manifiestoVideoWebm: "",
-  manifiestoPoster: u("1490127252417-7c393f993ee4", 1600), // fallback / primer frame
+  manifiestoPoster: "/img/manifiesto-poster.jpg", // fotograma real del video (fallback en móvil)
 }

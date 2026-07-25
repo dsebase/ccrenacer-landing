@@ -84,29 +84,62 @@ export default function Manifiesto({ videoSrc, videoWebm, poster }: ManifiestoPr
     offset: ["start end", "end start"],
   })
 
-  // Forzar autoplay: algunos navegadores exigen muted vía propiedad JS, no atributo
+  // Detectar móvil / reduced-motion para aligerar la sección en teléfonos.
+  const [lite, setLite] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia(
+      "(max-width: 768px), (prefers-reduced-motion: reduce)",
+    )
+    const update = () => setLite(mq.matches)
+    update()
+    mq.addEventListener("change", update)
+    return () => mq.removeEventListener("change", update)
+  }, [])
+
+  // Autoplay robusto: muchos móviles rechazan el primer play() (modo ahorro de
+  // energía/datos) y se quedan en el poster. Reintentamos cuando el video está
+  // listo, cuando entra en viewport y al primer toque del usuario.
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
     v.muted = true
-    const p = v.play()
-    if (p) p.catch(() => {})
+    const tryPlay = () => {
+      const p = v.play()
+      if (p) p.catch(() => {})
+    }
+    tryPlay()
+    v.addEventListener("canplay", tryPlay)
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && tryPlay()),
+      { threshold: 0.1 },
+    )
+    io.observe(v)
+    const onTouch = () => tryPlay()
+    window.addEventListener("touchstart", onTouch, { once: true, passive: true })
+    return () => {
+      v.removeEventListener("canplay", tryPlay)
+      io.disconnect()
+      window.removeEventListener("touchstart", onTouch)
+    }
   }, [])
 
   const auroraY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"])
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1.15, 1])
+  const videoScaleRaw = useTransform(scrollYProgress, [0, 1], [1.15, 1])
+  // En móvil dejamos el video estático: re-escalar un video 1080p en cada frame
+  // de scroll es lo que más lag genera en teléfonos.
+  const videoScale = lite ? 1 : videoScaleRaw
 
-  // Partículas pre-generadas para SSR estable
+  // Partículas pre-generadas para SSR estable (muchas menos en móvil).
   const particles = useMemo(
     () =>
-      Array.from({ length: 22 }, (_, i) => ({
+      Array.from({ length: lite ? 6 : 22 }, (_, i) => ({
         id: i,
         left: (i * 41) % 100,
         delay: (i * 0.7) % 8,
         duration: 9 + (i % 5) * 2,
         size: i % 3 === 0 ? 3 : i % 3 === 1 ? 2 : 1.5,
       })),
-    [],
+    [lite],
   )
 
   return (
@@ -142,10 +175,13 @@ export default function Manifiesto({ videoSrc, videoWebm, poster }: ManifiestoPr
       {/* Gradiente solo en bordes para fundir con secciones vecinas */}
       <div className="absolute inset-0 z-[1] bg-gradient-to-b from-ink-950 via-transparent to-ink-950 opacity-80" />
 
-      {/* Aurora líquida con parallax (sutil, el video ya aporta movimiento) */}
-      <motion.div style={{ y: auroraY }} className="absolute inset-0 z-[1] opacity-25">
-        <div className="aurora-liquid" />
-      </motion.div>
+      {/* Aurora líquida con parallax (sutil, el video ya aporta movimiento).
+          Se omite en móvil para aligerar la GPU. */}
+      {!lite && (
+        <motion.div style={{ y: auroraY }} className="absolute inset-0 z-[1] opacity-25">
+          <div className="aurora-liquid" />
+        </motion.div>
+      )}
 
       {/* Partículas */}
       <div className="absolute inset-0 z-[2] pointer-events-none">
