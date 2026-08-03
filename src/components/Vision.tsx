@@ -106,21 +106,24 @@ export default function Vision() {
                 style={isDesktop ? undefined : { flexGrow: 0, flexShrink: 0 }}
                 className="group relative basis-0 min-w-0 overflow-hidden rounded-[28px] text-left outline-none ring-spirit-400/70 focus-visible:ring-2"
               >
-                {/* Imagen de fondo */}
+                {/* Imagen de fondo — clara y nítida */}
                 <img
                   src={p.img}
                   alt={p.t}
-                  className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ${
-                    on ? "scale-100 opacity-75" : "scale-105 opacity-40"
+                  className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ${
+                    on ? "scale-100" : "scale-105"
                   }`}
                   loading="lazy"
                 />
-                <div
-                  className={`absolute inset-0 transition-colors duration-500 ${
-                    on
-                      ? "bg-gradient-to-t from-ink-950/90 via-ink-950/45 to-ink-950/10"
-                      : "bg-ink-950/70"
-                  }`}
+                {/* Degradado inferior para legibilidad (estilo footer): oscuro abajo
+                    y transparente arriba — deja la parte superior de la foto limpia */}
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/55 to-transparent" />
+                {/* Atenuado extra solo en paneles colapsados; se desvanece al activarse */}
+                <motion.div
+                  aria-hidden="true"
+                  animate={{ opacity: on ? 0 : 0.45 }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  className="absolute inset-0 bg-ink-950"
                 />
 
                 {/* Línea de acento que crece en el panel activo */}
