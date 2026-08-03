@@ -46,10 +46,13 @@ export default function Vision() {
   }, [])
 
   return (
-    <section id="vision" className="relative py-32 lg:py-44 bg-paper-50">
+    <section
+      id="vision"
+      className="relative pt-40 lg:pt-52 pb-32 lg:pb-44 bg-paper-50"
+    >
       <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
         {/* Encabezado */}
-        <div className="grid lg:grid-cols-[1fr_1.5fr] gap-10 lg:gap-20 mb-12 lg:mb-16 items-end">
+        <div className="grid lg:grid-cols-[1fr_1.5fr] gap-10 lg:gap-20 mb-6 lg:mb-8 items-end">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -134,14 +137,6 @@ export default function Vision() {
                   animate={{ opacity: on ? 0 : 0.4 }}
                   transition={{ duration: 0.5, ease: EASE }}
                   className="absolute inset-0 bg-ink-950"
-                />
-
-                {/* Línea de acento que crece en el panel activo */}
-                <motion.span
-                  aria-hidden="true"
-                  animate={{ scaleX: on ? 1 : 0 }}
-                  transition={{ duration: 0.5, ease: EASE }}
-                  className="absolute left-8 right-8 top-0 z-10 hidden h-px origin-left bg-spirit-400 lg:block"
                 />
 
                 {/* Número + flecha (siempre arriba) */}
