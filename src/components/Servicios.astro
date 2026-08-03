@@ -134,7 +134,7 @@ const servicios = [
       cierre con Esc incluidos). Se abre con el botón "Ver agenda completa". */}
   <dialog id="agenda-modal" aria-label="Agenda completa de la iglesia">
     <div class="agenda-scroll min-h-full w-full flex items-start sm:items-center justify-center overflow-hidden p-4 sm:p-6">
-      <div class="agenda-panel relative w-full max-w-[1100px] max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-3rem)] overflow-y-auto rounded-[28px] bg-paper-50 shadow-2xl shadow-black/40 ring-1 ring-ink-900/10">
+      <div class="agenda-panel scroll-fine relative w-full max-w-[1100px] max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-3rem)] overflow-y-auto rounded-[28px] bg-paper-50 shadow-2xl shadow-black/40 ring-1 ring-ink-900/10">
         {/* Cabecera fija */}
         <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-ink-900/10 bg-paper-50/95 px-6 sm:px-8 py-5 backdrop-blur">
           <div>
@@ -202,25 +202,7 @@ const servicios = [
   }
   /* Bloquea el scroll del fondo mientras el modal está abierto */
   html:has(#agenda-modal[open]) { overflow: hidden; }
-
-  /* Scrollbar fina y sobria del panel (Firefox + WebKit) */
-  .agenda-panel {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(15, 23, 32, 0.22) transparent;
-    scroll-behavior: smooth;
-  }
-  .agenda-panel::-webkit-scrollbar { width: 8px; }
-  .agenda-panel::-webkit-scrollbar-track { background: transparent; }
-  .agenda-panel::-webkit-scrollbar-thumb {
-    background: rgba(15, 23, 32, 0.2);
-    border-radius: 999px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-  .agenda-panel::-webkit-scrollbar-thumb:hover {
-    background: rgba(15, 23, 32, 0.34);
-    background-clip: padding-box;
-  }
+  /* La barra fina usa la utilidad global .scroll-fine (ver global.css) */
   @media (prefers-reduced-motion: reduce) {
     #agenda-modal[open]:not(.is-closing),
     #agenda-modal[open]:not(.is-closing) .agenda-panel,

@@ -333,6 +333,30 @@
     display: none;
   }
 
+  /* ─── Scrollbar fina y sobria (modales / paneles con scroll) ─── */
+  .scroll-fine {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(15, 23, 32, 0.22) transparent;
+    scroll-behavior: smooth;
+  }
+  .scroll-fine::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scroll-fine::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scroll-fine::-webkit-scrollbar-thumb {
+    background: rgba(15, 23, 32, 0.2);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .scroll-fine::-webkit-scrollbar-thumb:hover {
+    background: rgba(15, 23, 32, 0.34);
+    background-clip: padding-box;
+  }
+
   /* ─── Oleaje del loader ────────────────────────────────────── */
   @keyframes wave-drift {
     from { transform: translateX(0); }

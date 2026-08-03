@@ -676,7 +676,7 @@ function RenacerModal() {
                     </div>
 
                     {/* Cuerpo scrollable */}
-                    <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6 space-y-8">
+                    <div className="scroll-fine flex-1 overflow-y-auto px-6 lg:px-8 py-6 space-y-8">
                       {renacerBooks.map((b) => (
                         <article key={b.n} className="grid sm:grid-cols-[auto_1fr] gap-5 sm:gap-6 items-start">
                           <BookCover n={b.n} img={b.img} />
