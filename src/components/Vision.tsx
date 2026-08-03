@@ -123,44 +123,64 @@ export default function Vision() {
                   }`}
                 />
 
-                {/* Marca de agua de llama */}
-                <div
+                {/* Línea de acento que crece en el panel activo */}
+                <motion.span
                   aria-hidden="true"
-                  className={`pointer-events-none absolute -bottom-8 -right-6 z-0 text-spirit-300/[0.12] transition-all duration-700 ${
-                    on ? "scale-110 opacity-100" : "scale-90 opacity-60"
-                  }`}
-                >
-                  <svg width="180" height="234" viewBox="0 0 200 260" fill="currentColor">
-                    <path d="M100 8c-6 28-46 60-46 110a46 46 0 0 0 92 0c0-50-40-82-46-110z" />
-                  </svg>
+                  animate={{ scaleX: on ? 1 : 0 }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  className="absolute left-8 right-8 top-0 z-10 hidden h-px origin-left bg-spirit-400 lg:block"
+                />
+
+                {/* Número + flecha (siempre arriba) */}
+                <div className="absolute inset-x-6 top-6 z-10 flex items-center justify-between lg:inset-x-8 lg:top-8">
+                  <span className="font-mono text-xs tracking-[0.3em] text-spirit-300">
+                    {p.n}
+                  </span>
+                  <motion.span
+                    aria-hidden="true"
+                    animate={{ rotate: on ? 0 : -30, opacity: on ? 1 : 0.5 }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                    className="text-spirit-300"
+                  >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M7 17L17 7M9 7h8v8" />
+                    </svg>
+                  </motion.span>
                 </div>
 
-                {/* Contenido */}
-                <div className="relative z-10 flex h-full w-full flex-col justify-between p-6 lg:p-8">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs tracking-[0.3em] text-spirit-300">
-                      {p.n}
-                    </span>
-                    <motion.span
-                      aria-hidden="true"
-                      animate={{ rotate: on ? 0 : -30, opacity: on ? 1 : 0.5 }}
-                      transition={{ duration: 0.5, ease: EASE }}
-                      className="text-spirit-300"
+                {isDesktop ? (
+                  <>
+                    {/* Colapsado: título en vertical, centrado abajo */}
+                    <motion.div
+                      aria-hidden={on}
+                      animate={{ opacity: on ? 0 : 1 }}
+                      transition={{ duration: 0.35, ease: EASE }}
+                      className="pointer-events-none absolute inset-0 z-10 flex items-end justify-center pb-8"
                     >
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M7 17L17 7M9 7h8v8" />
-                      </svg>
-                    </motion.span>
-                  </div>
+                      <h3 className="font-display text-xl text-paper-50 tracking-[-0.02em] whitespace-nowrap [writing-mode:vertical-rl] rotate-180">
+                        {p.t}
+                      </h3>
+                    </motion.div>
 
-                  <div className="min-w-0">
-                    <h3
-                      className={`font-display text-paper-50 tracking-[-0.02em] leading-[1.05] text-balance ${
-                        isDesktop && !on
-                          ? "text-xl [writing-mode:vertical-rl] rotate-180 mx-auto whitespace-nowrap"
-                          : "text-2xl lg:text-4xl"
-                      }`}
+                    {/* Expandido: título grande + descripción, anclado abajo (crossfade, sin reflow) */}
+                    <motion.div
+                      aria-hidden={!on}
+                      animate={{ opacity: on ? 1 : 0 }}
+                      transition={{ duration: 0.4, ease: EASE, delay: on ? 0.12 : 0 }}
+                      className="pointer-events-none absolute inset-x-8 bottom-8 z-10"
                     >
+                      <h3 className="font-display text-3xl lg:text-4xl text-paper-50 tracking-[-0.02em] leading-[1.05] text-balance">
+                        {p.t}
+                      </h3>
+                      <p className="mt-3 max-w-[46ch] text-sm lg:text-base leading-relaxed text-paper-100/85">
+                        {p.d}
+                      </p>
+                    </motion.div>
+                  </>
+                ) : (
+                  /* Móvil: acordeón vertical — título abajo, descripción se despliega */
+                  <div className="absolute inset-x-6 bottom-6 z-10">
+                    <h3 className="font-display text-2xl text-paper-50 tracking-[-0.02em] leading-[1.05] text-balance">
                       {p.t}
                     </h3>
                     <AnimatePresence initial={false}>
@@ -168,17 +188,17 @@ export default function Vision() {
                         <motion.p
                           key="desc"
                           initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                          animate={{ opacity: 1, height: "auto", marginTop: 14 }}
+                          animate={{ opacity: 1, height: "auto", marginTop: 12 }}
                           exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                          transition={{ duration: 0.45, ease: EASE }}
-                          className="overflow-hidden text-sm lg:text-base leading-relaxed text-paper-100/85 max-w-[46ch]"
+                          transition={{ duration: 0.4, ease: EASE }}
+                          className="overflow-hidden text-sm leading-relaxed text-paper-100/85"
                         >
                           {p.d}
                         </motion.p>
                       )}
                     </AnimatePresence>
                   </div>
-                </div>
+                )}
               </motion.button>
             )
           })}
