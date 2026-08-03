@@ -78,7 +78,7 @@ const links = [
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
 
-    <div class="flex flex-col items-center justify-center min-h-screen gap-6">
+    <div class="flex flex-col items-center justify-center min-h-screen gap-6 overflow-y-auto py-20">
       <img src="/logo_menu.png" alt="Comunidad Cristiana Renacer" class="h-12 w-auto object-contain mb-8" />
       {links.map((l) => (
         <a href={l.href} class="font-display text-4xl text-ink-900 hover:text-spirit-500 transition-colors" data-mobile-link>
