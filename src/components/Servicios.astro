@@ -180,35 +180,79 @@ const servicios = [
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
   }
-  #agenda-modal[open] { animation: agenda-fade 0.55s cubic-bezier(0.33, 1, 0.68, 1); }
-  #agenda-modal[open]::backdrop { animation: agenda-fade 0.55s ease; }
-  #agenda-modal[open] .agenda-panel { animation: agenda-pop 0.65s cubic-bezier(0.33, 1, 0.68, 1); }
+  /* Apertura */
+  #agenda-modal[open]:not(.is-closing) { animation: agenda-fade 0.55s cubic-bezier(0.33, 1, 0.68, 1); }
+  #agenda-modal[open]:not(.is-closing)::backdrop { animation: agenda-fade 0.55s ease; }
+  #agenda-modal[open]:not(.is-closing) .agenda-panel { animation: agenda-pop 0.65s cubic-bezier(0.33, 1, 0.68, 1); }
+
+  /* Cierre — reverso suave con el mismo easing que la apertura */
+  #agenda-modal.is-closing { animation: agenda-fade-out 0.5s cubic-bezier(0.33, 1, 0.68, 1) forwards; }
+  #agenda-modal.is-closing::backdrop { animation: agenda-fade-out 0.5s ease forwards; }
+  #agenda-modal.is-closing .agenda-panel { animation: agenda-pop-out 0.55s cubic-bezier(0.33, 1, 0.68, 1) forwards; }
+
   @keyframes agenda-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes agenda-fade-out { from { opacity: 1; } to { opacity: 0; } }
   @keyframes agenda-pop {
     from { opacity: 0; transform: translateY(24px) scale(0.99); }
     to { opacity: 1; transform: none; }
   }
+  @keyframes agenda-pop-out {
+    from { opacity: 1; transform: none; }
+    to { opacity: 0; transform: translateY(24px) scale(0.99); }
+  }
   /* Bloquea el scroll del fondo mientras el modal está abierto */
   html:has(#agenda-modal[open]) { overflow: hidden; }
   @media (prefers-reduced-motion: reduce) {
-    #agenda-modal[open],
-    #agenda-modal[open] .agenda-panel { animation: none; }
+    #agenda-modal[open]:not(.is-closing),
+    #agenda-modal[open]:not(.is-closing) .agenda-panel,
+    #agenda-modal.is-closing,
+    #agenda-modal.is-closing .agenda-panel { animation: none; }
   }
 </style>
 
 <script>
   const dlg = document.getElementById("agenda-modal") as HTMLDialogElement | null
   if (dlg) {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)")
+    let closing = false
+
+    // Cierre animado: reproduce el reverso y recién entonces cierra el <dialog>.
+    const closeAgenda = () => {
+      if (closing) return
+      if (reduce.matches) {
+        dlg.close()
+        return
+      }
+      closing = true
+      dlg.classList.add("is-closing")
+      const panel = dlg.querySelector<HTMLElement>(".agenda-panel")
+      let done = false
+      const finish = () => {
+        if (done) return
+        done = true
+        dlg.classList.remove("is-closing")
+        closing = false
+        dlg.close()
+      }
+      panel?.addEventListener("animationend", finish, { once: true })
+      window.setTimeout(finish, 700) // red de seguridad si no dispara animationend
+    }
+
     document
       .querySelectorAll<HTMLButtonElement>("[data-agenda-open]")
       .forEach((b) => b.addEventListener("click", () => dlg.showModal()))
     dlg
       .querySelector<HTMLButtonElement>("[data-agenda-close]")
-      ?.addEventListener("click", () => dlg.close())
+      ?.addEventListener("click", closeAgenda)
     // Cerrar al hacer clic fuera del panel (sobre el backdrop / zona vacía)
     dlg.addEventListener("click", (e) => {
       const panel = dlg.querySelector(".agenda-panel")
-      if (panel && !panel.contains(e.target as Node)) dlg.close()
+      if (panel && !panel.contains(e.target as Node)) closeAgenda()
+    })
+    // Tecla Esc: animamos el cierre en vez del cierre instantáneo nativo
+    dlg.addEventListener("cancel", (e) => {
+      e.preventDefault()
+      closeAgenda()
     })
   }
 </script>
