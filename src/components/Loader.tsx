@@ -24,8 +24,16 @@ export default function Loader() {
   const [done, setDone] = useState(false)
 
   useEffect(() => {
-    const t = setTimeout(() => setDone(true), 2900)
-    return () => clearTimeout(t)
+    // Bloquea el scroll mientras la pantalla de carga está activa
+    document.documentElement.style.overflow = "hidden"
+    const t = setTimeout(() => {
+      setDone(true)
+      document.documentElement.style.overflow = ""
+    }, 2900)
+    return () => {
+      clearTimeout(t)
+      document.documentElement.style.overflow = ""
+    }
   }, [])
 
   return (
