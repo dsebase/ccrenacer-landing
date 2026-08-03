@@ -114,7 +114,7 @@ export default function Vision() {
                   src={p.img}
                   alt={p.t}
                   className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ${
-                    on ? "scale-100" : "scale-105"
+                    on ? "scale-105" : "scale-100"
                   }`}
                   loading="lazy"
                 />
