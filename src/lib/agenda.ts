@@ -71,6 +71,16 @@ export const semanales: ActividadSemanal[] = [
   },
   {
     tipo: "weekly",
+    diaSemana: 1,
+    hora: "05:00",
+    titulo: "Amanecer con el Espíritu Santo",
+    lugar: "Zoom",
+    categoria: "Oración",
+    descripcion:
+      "Comenzamos el día buscando la presencia de Dios en oración. Transmisión por Zoom para toda la iglesia.",
+  },
+  {
+    tipo: "weekly",
     diaSemana: 3,
     hora: "05:00",
     titulo: "Amanecer con el Espíritu Santo",
