@@ -115,13 +115,23 @@ export default function Vision() {
                   }`}
                   loading="lazy"
                 />
-                {/* Degradado inferior para legibilidad (estilo footer): oscuro abajo
-                    y transparente arriba — deja la parte superior de la foto limpia */}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/55 to-transparent" />
+                {/* Base oscura inferior para legibilidad (oscuro abajo → transparente arriba) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/50 to-transparent" />
+                {/* Nebulosa celeste que emerge desde la base */}
+                <motion.div
+                  aria-hidden="true"
+                  animate={{ opacity: on ? 0.9 : 0.55 }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                  className="absolute inset-x-0 bottom-0 h-3/4 mix-blend-screen"
+                  style={{
+                    background:
+                      "radial-gradient(120% 100% at 50% 120%, rgba(23,156,218,0.60) 0%, rgba(17,160,192,0.22) 40%, transparent 72%)",
+                  }}
+                />
                 {/* Atenuado extra solo en paneles colapsados; se desvanece al activarse */}
                 <motion.div
                   aria-hidden="true"
-                  animate={{ opacity: on ? 0 : 0.45 }}
+                  animate={{ opacity: on ? 0 : 0.4 }}
                   transition={{ duration: 0.5, ease: EASE }}
                   className="absolute inset-0 bg-ink-950"
                 />
