@@ -217,23 +217,6 @@ export default function Vision() {
           })}
         </motion.div>
 
-        {/* Cierre: declaración de formación */}
-        <div className="mt-16 lg:mt-24 border-t border-ink-900/10 pt-12 lg:pt-16 grid lg:grid-cols-[auto_1fr_auto] gap-8 lg:gap-16 lg:items-center">
-          <p className="eyebrow shrink-0">
-            <span>Nuestra formación</span>
-          </p>
-          <p className="font-display font-light text-2xl lg:text-4xl text-ink-900 leading-[1.2] text-balance max-w-3xl">
-            Acompañamos cada paso: del{" "}
-            <span className="italic text-spirit-500">nuevo nacimiento al servicio</span>,
-            con procesos de discipulado que forman el carácter de Cristo.
-          </p>
-          <a href="#proceso" className="btn-outline shrink-0 self-start lg:self-center" data-cursor="hover">
-            <span>Conoce el proceso</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M13 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
       </div>
     </section>
   )
