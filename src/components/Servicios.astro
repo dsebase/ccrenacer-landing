@@ -180,11 +180,12 @@ const servicios = [
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
   }
-  #agenda-modal[open] { animation: agenda-fade 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
-  #agenda-modal[open] .agenda-panel { animation: agenda-pop 0.34s cubic-bezier(0.16, 1, 0.3, 1); }
+  #agenda-modal[open] { animation: agenda-fade 0.55s cubic-bezier(0.33, 1, 0.68, 1); }
+  #agenda-modal[open]::backdrop { animation: agenda-fade 0.55s ease; }
+  #agenda-modal[open] .agenda-panel { animation: agenda-pop 0.65s cubic-bezier(0.33, 1, 0.68, 1); }
   @keyframes agenda-fade { from { opacity: 0; } to { opacity: 1; } }
   @keyframes agenda-pop {
-    from { opacity: 0; transform: translateY(18px) scale(0.98); }
+    from { opacity: 0; transform: translateY(24px) scale(0.99); }
     to { opacity: 1; transform: none; }
   }
   /* Bloquea el scroll del fondo mientras el modal está abierto */

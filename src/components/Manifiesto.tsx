@@ -454,7 +454,7 @@ function PrincipioCard({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
                 className="fixed inset-0 z-[60] flex items-end bg-ink-950/70"
                 onClick={() => setTip(null)}
               >
@@ -462,7 +462,7 @@ function PrincipioCard({
                   initial={{ y: "100%" }}
                   animate={{ y: 0 }}
                   exit={{ y: "100%" }}
-                  transition={{ type: "tween", duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ type: "tween", duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
                   className="w-full rounded-t-3xl bg-paper-50 p-6 pb-9 shadow-2xl"
                   onClick={(e) => e.stopPropagation()}
                 >
