@@ -88,7 +88,7 @@ export default function ScrollStory({ stages }: Props) {
           <div className="mx-auto max-w-[1400px] flex items-end justify-between gap-6">
             <div>
               <p className="eyebrow">
-                <span>05 · El proceso de renacer</span>
+                <span>05 · Nuestra formación: El proceso de renacer</span>
               </p>
               <h2 className="mt-6 font-display font-light text-[clamp(2rem,5vw,5rem)] leading-[1] text-ink-900 max-w-3xl text-balance">
                 Tres tiempos.<br />
@@ -132,7 +132,7 @@ function MobileStages({ stages, total }: { stages: Stage[]; total: number }) {
   return (
     <section className="lg:hidden relative bg-paper-50 py-24">
       <div className="px-6">
-        <p className="eyebrow mb-5"><span>05 · El proceso de renacer</span></p>
+        <p className="eyebrow mb-5"><span>05 · Nuestra formación: El proceso de renacer</span></p>
         <h2 className="font-display font-light text-[clamp(2.25rem,9vw,3.5rem)] leading-[1] text-ink-900 tracking-[-0.025em] mb-14">
           Tres tiempos.<br />
           <span className="italic text-spirit-500">Un mismo Espíritu.</span>
