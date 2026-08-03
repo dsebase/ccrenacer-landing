@@ -4,7 +4,7 @@ import Hero from "../components/Hero.tsx"
 import Marquee from "../components/Marquee.astro"
 import Manifiesto from "../components/Manifiesto.tsx"
 import ScrollStory from "../components/ScrollStory.tsx"
-import Vision from "../components/Vision.astro"
+import Vision from "../components/Vision.tsx"
 import Servicios from "../components/Servicios.astro"
 import Ministerios from "../components/Ministerios.tsx"
 import Ubicaciones from "../components/Ubicaciones.astro"
@@ -108,7 +108,7 @@ const ministerios = [
     poster={media.manifiestoPoster}
   />
   <Servicios />
-  <Vision />
+  <Vision client:visible />
   <ScrollStory client:load stages={stages} />
   <Ministerios client:visible ministerios={ministerios} />
   <Ubicaciones />
