@@ -7,22 +7,21 @@ const cuentas = [
     banco: "BBVA",
     tipo: "Cuenta Corriente Soles",
     moneda: "S/",
-    numero: "0011-XXXX-XXXXXXXXX",
-    cci: "011-XXX-XXXXXXXXXXXX-XX",
+    numero: "0011-0118-0100043140",
+    cci: "011-118-000100043140-71",
   },
   {
     id: "bbva-dolares",
     banco: "BBVA",
     tipo: "Cuenta Corriente Dólares",
     moneda: "US$",
-    numero: "0011-XXXX-XXXXXXXXX",
-    cci: "011-XXX-XXXXXXXXXXXX-XX",
+    numero: "0011-0118-0100043159",
+    cci: "011-118-000100043159-71",
   },
 ]
 
-// Ruta del QR (reemplazar por el QR real de Yape / Plin cuando esté disponible).
-// Colocar el archivo en: landing/public/img/qr-ofrenda.png
-const qrSrc = "/img/qr-ofrenda.png"
+// Ruta del QR real de la iglesia.
+const qrSrc = "/img/qr_rncr.png"
 const qrNumero = "+51 931 797 790"
 ---
 
@@ -81,12 +80,12 @@ const qrNumero = "+51 931 797 790"
                   <p class="font-mono text-[9px] uppercase tracking-[0.3em] text-paper-100/45 mb-1.5">
                     Cta. Corriente
                   </p>
-                  <p class="font-display text-xl lg:text-2xl text-paper-50 tracking-[-0.02em] break-all">
+                  <p class="font-display text-lg lg:text-xl text-paper-50 tracking-[-0.02em] whitespace-nowrap tabular-nums">
                     {c.numero}
                   </p>
                   <div class="mt-4 pt-4 border-t border-paper-50/10">
                     <p class="font-mono text-[9px] uppercase tracking-[0.3em] text-paper-100/45 mb-1">CCI</p>
-                    <p class="text-xs text-paper-100/75 break-all">{c.cci}</p>
+                    <p class="text-xs text-paper-100/75 whitespace-nowrap tabular-nums">{c.cci}</p>
                   </div>
                 </div>
                 <button
