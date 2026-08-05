@@ -26,6 +26,7 @@ export const images = {
   adoracionMin: "/img/ministerio-alabanza.png",
   misiones: "/img/ministerio-intercesion.png",      // Intercesión
   social: "/img/ministerio-multimedia.png",         // Multimedia
+  conexion: u("1492684223066-81342ee5ff30", 1200),  // Conexión / Ujieres · placeholder hasta la foto real (/img/ministerio-conexion.png)
 
   // Eventos
   evento1: u("1501281668745-f7f57925c3b4", 800),
