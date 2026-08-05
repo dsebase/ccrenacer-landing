@@ -20,9 +20,9 @@ const paises = [
 ]
 ---
 
-<section id="contacto" class="relative py-32 lg:py-44 bg-paper-50">
+<section id="contacto" class="relative flex min-h-[100svh] snap-start flex-col justify-center pt-32 lg:pt-40 pb-14 lg:pb-16 [scroll-margin-top:-120px] bg-paper-50">
   <div class="mx-auto max-w-[1400px] px-6 lg:px-10">
-    <div class="grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-20 items-start">
+    <div class="grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-20 items-center">
       <!-- Columna izquierda: título + imagen -->
       <div>
         <p class="eyebrow mb-6">
@@ -42,23 +42,23 @@ const paises = [
 
       <!-- Columna derecha: datos + formulario -->
       <div>
-        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-8 mb-8 border-b border-ink-900/10">
+        <ul class="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-x-10 gap-y-5 pb-6 mb-6 border-b border-ink-900/10">
           <li>
             <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-500 mb-2">Correo</p>
-            <a href="mailto:info@ccrenacer.com" class="font-display text-lg lg:text-xl text-ink-900 link-underline break-all" data-cursor="hover">
+            <a href="mailto:info@ccrenacer.com" class="font-display text-base lg:text-lg text-ink-900 link-underline whitespace-nowrap" data-cursor="hover">
               info@ccrenacer.com
             </a>
           </li>
           <li>
             <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-500 mb-2">Dirección</p>
-            <p class="font-display text-lg lg:text-xl text-ink-900 leading-snug">
+            <p class="font-display text-base lg:text-lg text-ink-900 leading-snug whitespace-nowrap">
               Manuel Aguila Durand 280, Surco — Perú
             </p>
           </li>
         </ul>
 
         <form
-          class="surface-light rounded-[28px] p-8 lg:p-10 space-y-6"
+          class="surface-light rounded-[28px] p-6 lg:p-8 space-y-4"
           action="https://formspree.io/f/xxxxxx"
           method="POST"
         >
@@ -111,7 +111,7 @@ const paises = [
 
           <div>
             <label for="mensaje" class={labelClass}>Mensaje</label>
-            <textarea id="mensaje" name="mensaje" rows="4" class={`${inputClass} resize-none`} placeholder="Cuéntanos un poco..."></textarea>
+            <textarea id="mensaje" name="mensaje" rows="3" class={`${inputClass} resize-none`} placeholder="Cuéntanos un poco..."></textarea>
           </div>
 
           <button type="submit" class="btn-primary w-full justify-center" data-cursor="hover">
