@@ -48,6 +48,28 @@ en el sitio **sin recompilar nada más**: el navegador lo lee del ERP en vivo.
 Los endpoints son de **solo lectura**, con caché de 5 min, y devuelven
 únicamente registros con `is_public = true`.
 
+## Fotos de la web (desde el ERP)
+En el ERP, módulo **"Fotos de la web"**, cada foto del landing es un slot con su
+ubicación y medida recomendada. Al reemplazar una, el landing la toma sola
+(fallback a la foto por defecto si no se reemplazó o el ERP está offline).
+- Endpoint público: `GET /api/public/site-media` → `{ slot: url }`.
+- El swap ocurre en `Layout.astro` (busca el `<img>` por su ruta por defecto y
+  cambia el `src`; si la nueva imagen falla, revierte a la original).
+- Las claves de slot coinciden con `src/lib/images.ts`.
+
+## Facebook Live (página EN VIVO)
+El enlace del live y el estado "En vivo ahora" se administran en el ERP
+(Configuración → Facebook Live) y salen por `GET /api/public-config`
+(`live_fb_url`, `live_now`). La página `/en-vivo` inyecta el reproductor en vivo
+si hay URL; si no, usa el valor del `.env` (fallback).
+
+## Importante · CSP y CORS
+- El `.htaccess` (CSP) ya permite `https://sistema.ccrenacer.com` en
+  `connect-src` (fetch) e `img-src` (fotos subidas). Si cambia el dominio del
+  ERP, actualizar ambos.
+- En el ERP, `backend/.env`: `LANDING_URL=https://ccrenacer.com` (CORS + URL por
+  defecto de las fotos). CORS ya incluye ese dominio.
+
 ## Notas
 - Si el ERP responde con lista vacía, el landing conserva los datos fijos
   (para no dejar secciones en blanco por error).

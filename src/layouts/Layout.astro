@@ -70,5 +70,38 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://ccrenacer.c
       <slot />
     </main>
     <Footer />
+
+    <script>
+      // Fotos administradas desde el ERP: si un slot fue reemplazado, cambia
+      // el <img> correspondiente. Si el ERP no responde o la imagen nueva falla,
+      // se queda la foto por defecto (fallback). Nunca rompe el sitio.
+      import { images } from "../lib/images"
+      import { fetchSiteMedia } from "../lib/erp"
+
+      const applyMedia = (map: Record<string, string>) => {
+        const defs = images as unknown as Record<string, string>
+        for (const [slot, url] of Object.entries(map)) {
+          const def = defs[slot]
+          if (!def || !url) continue
+          document
+            .querySelectorAll<HTMLImageElement>(`img[src="${def}"]`)
+            .forEach((img) => {
+              if (img.dataset.mediaSwapped) return
+              img.dataset.mediaSwapped = "1"
+              const fallback = img.getAttribute("src") || ""
+              img.addEventListener("error", () => { if (fallback) img.src = fallback }, { once: true })
+              img.src = url
+            })
+        }
+      }
+
+      ;(async () => {
+        const map = await fetchSiteMedia()
+        if (!map || Array.isArray(map)) return // [] (vacío) o null → nada que cambiar
+        applyMedia(map)
+        // Segunda pasada por si alguna isla React hidrató tarde.
+        setTimeout(() => applyMedia(map), 1500)
+      })()
+    </script>
   </body>
 </html>

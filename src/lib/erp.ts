@@ -55,3 +55,22 @@ export const fetchIecs = () => get<IecPublic[]>("/public/home-churches")
 
 /** Próximos eventos marcados "Mostrar en la web". */
 export const fetchEventos = () => get<EventoPublic[]>("/public/events")
+
+// Mapa { slotDeImagen: urlSubida } — solo los slots con foto reemplazada.
+export type SiteMedia = Record<string, string>
+
+/** Fotos del landing reemplazadas desde el ERP (o null si no hay conexión). */
+export const fetchSiteMedia = () => get<SiteMedia>("/public/site-media")
+
+export interface PublicConfig {
+  facebook_url?: string
+  instagram_url?: string
+  youtube_url?: string
+  whatsapp_url?: string
+  live_fb_url?: string
+  live_now?: boolean
+  [k: string]: unknown
+}
+
+/** Configuración pública del ERP (redes + Facebook Live). */
+export const fetchPublicConfig = () => get<PublicConfig>("/public-config")

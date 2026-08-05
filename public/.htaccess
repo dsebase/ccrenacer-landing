@@ -23,7 +23,7 @@
   #   - Cloudflare Turnstile (captcha)   - YouTube (embeds/miniaturas)
   #   - Google Fonts                     - Facebook (embeds del live)
   # Si agregas otro servicio externo (analytics, mapa, etc.) añádelo aquí.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.youtube.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://img.youtube.com https://*.ytimg.com https://www.google.com; frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.facebook.com https://web.facebook.com; connect-src 'self' https://challenges.cloudflare.com https://www.youtube.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.youtube.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://sistema.ccrenacer.com https://i.ytimg.com https://img.youtube.com https://*.ytimg.com https://www.google.com https://images.unsplash.com; frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.facebook.com https://web.facebook.com; connect-src 'self' https://sistema.ccrenacer.com https://challenges.cloudflare.com https://www.youtube.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
 </IfModule>
 
 # ── Proteger el config con secretos y la plantilla ──

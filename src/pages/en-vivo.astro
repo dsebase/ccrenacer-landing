@@ -76,7 +76,7 @@ const ytVideos = ytFetched.length
           <p class="eyebrow !text-ink-500"><span>Transmisión por Facebook Live</span></p>
         </div>
 
-        <div class="relative rounded-[28px] overflow-hidden bg-ink-950 group">
+        <div id="fb-live-slot" class="relative rounded-[28px] overflow-hidden bg-ink-950 group">
           {fbEmbed ? (
             <div class="relative w-full" style="aspect-ratio:16/9">
               <iframe
@@ -364,5 +364,31 @@ const ytVideos = ytFetched.length
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeVideo()
     })
+  </script>
+
+  <script>
+    // Facebook Live administrado desde el ERP: si hay una URL de live configurada,
+    // inyecta el reproductor. Si el ERP no responde o no hay URL, se queda lo que
+    // vino del .env (fallback). Nunca rompe la página.
+    import { fetchPublicConfig } from "../lib/erp"
+
+    ;(async () => {
+      const cfg = await fetchPublicConfig()
+      if (!cfg) return
+      const slot = document.getElementById("fb-live-slot")
+      if (slot && cfg.live_fb_url) {
+        const embed =
+          "https://www.facebook.com/plugins/video.php?href=" +
+          encodeURIComponent(cfg.live_fb_url) +
+          "&show_text=false&autoplay=true"
+        slot.innerHTML =
+          '<div class="relative w-full" style="aspect-ratio:16/9">' +
+          '<iframe class="absolute inset-0 w-full h-full" src="' + embed + '" ' +
+          'title="Facebook Live · Renacer" style="border:none;overflow:hidden" ' +
+          'scrolling="no" frameborder="0" ' +
+          'allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" ' +
+          "allowfullscreen></iframe></div>"
+      }
+    })()
   </script>
 </Layout>
