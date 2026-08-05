@@ -387,17 +387,80 @@ const diasActivos = new Set(iecs.map((i) => i.dia))
   <script>
     // ═══════════════════════════════════════════════════════════
     // Modal de IECs — apertura, cierre, filtro por día.
-    // Sin frameworks; vanilla JS con accesibilidad básica.
+    // Los datos vienen del ERP si está configurado (fallback: datos fijos).
+    // El filtro consulta el DOM en cada uso, así funciona igual con datos
+    // fijos o con los que inyecta el ERP. Vanilla JS, accesible.
     // ═══════════════════════════════════════════════════════════
+    import { erpEnabled, fetchIecs } from "../lib/erp"
+    import type { IecPublic } from "../lib/erp"
+
     const modal = document.getElementById("iec-modal") as HTMLDivElement | null
     const openBtn = document.getElementById("iec-open-btn") as HTMLButtonElement | null
-    const filterButtons = modal?.querySelectorAll<HTMLButtonElement>(".iec-day-btn:not([disabled])") ?? []
-    const cards = modal?.querySelectorAll<HTMLLIElement>(".iec-card") ?? []
+    const listEl = document.getElementById("iec-list")
+    const filterWrap = document.getElementById("iec-filter")
     const emptyMsg = document.getElementById("iec-empty")
 
     let previousFocus: HTMLElement | null = null
-
     let readyTimer: ReturnType<typeof setTimeout> | undefined
+    let currentDay = "todos"
+
+    const esc = (s: unknown) =>
+      String(s ?? "").replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string)
+
+    // Genera el HTML de una card (mismo markup que el render de Astro)
+    const cardHtml = (iec: IecPublic, i: number) => `
+      <li class="iec-card group relative p-5 rounded-[16px] border border-ink-900/8 hover:border-spirit-500/50 hover:shadow-md transition-all duration-400" data-day="${esc(iec.dia)}" style="--i:${i}" data-cursor="hover">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-spirit-500 shrink-0"></span>
+            <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-500 truncate">${esc(iec.dia)}${iec.hora ? " · " + esc(iec.hora) : ""}</p>
+          </div>
+          <h4 class="font-display text-xl lg:text-2xl text-ink-900 tracking-[-0.02em] group-hover:italic transition-all duration-500 leading-tight">${esc(iec.nombre)}</h4>
+          <div class="mt-3 flex items-baseline gap-2">
+            <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-ink-400 shrink-0">Líder(es)</span>
+            <p class="text-ink-900 text-sm font-medium leading-snug truncate">${esc(iec.lideres)}</p>
+          </div>
+          <div class="mt-1.5 flex items-center gap-1.5 text-ink-500">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="shrink-0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+            <p class="text-xs leading-snug truncate">${esc(iec.distrito)}</p>
+          </div>
+        </div>
+      </li>`
+
+    // Habilita/deshabilita un pill de día según haya IECs ese día
+    const setDayEnabled = (btn: HTMLButtonElement, enabled: boolean) => {
+      btn.disabled = !enabled
+      btn.classList.toggle("text-ink-300", !enabled)
+      btn.classList.toggle("cursor-not-allowed", !enabled)
+      btn.classList.toggle("opacity-50", !enabled)
+      if (enabled) btn.setAttribute("data-cursor", "hover")
+      else btn.removeAttribute("data-cursor")
+    }
+
+    const applyFilter = (day: string) => {
+      currentDay = day
+      const cards = modal?.querySelectorAll<HTMLLIElement>(".iec-card") ?? []
+      let visibleCount = 0
+      cards.forEach((card) => {
+        const show = day === "todos" || (card.dataset.day ?? "") === day
+        card.style.display = show ? "" : "none"
+        if (show) visibleCount++
+      })
+      emptyMsg?.classList.toggle("hidden", visibleCount > 0)
+
+      // Estado visual de los pills (se consultan frescos del DOM)
+      const allBtns = modal?.querySelectorAll<HTMLButtonElement>(".iec-day-btn") ?? []
+      allBtns.forEach((b) => {
+        const isActive = b.dataset.day === day
+        b.classList.toggle("bg-ink-900", isActive)
+        b.classList.toggle("text-paper-50", isActive)
+        b.classList.toggle("bg-paper-50", !isActive)
+        b.classList.toggle("text-ink-900", !isActive && !b.disabled)
+        b.classList.toggle("border", !isActive)
+        b.classList.toggle("border-ink-900/15", !isActive && !b.disabled)
+      })
+    }
 
     const openModal = () => {
       if (!modal) return
@@ -407,13 +470,9 @@ const diasActivos = new Set(iecs.map((i) => i.dia))
       modal.classList.add("is-open")
       modal.setAttribute("aria-hidden", "false")
       document.body.classList.add("iec-modal-open")
-      // Reset filtro al estado "Todos" cada vez que se abre
       applyFilter("todos")
-      // Tras la cascada de entrada, desactiva la animación para que
-      // filtrar por día muestre las cards al instante (sin re-disparar la cascada).
       clearTimeout(readyTimer)
       readyTimer = setTimeout(() => modal.classList.add("iec-cards-ready"), 850)
-      // Foco al primer botón cliqueable dentro del modal
       requestAnimationFrame(() => {
         const closeBtn = modal.querySelector<HTMLButtonElement>("[data-iec-close]")
         closeBtn?.focus()
@@ -426,67 +485,46 @@ const diasActivos = new Set(iecs.map((i) => i.dia))
       modal.classList.remove("is-open")
       modal.setAttribute("aria-hidden", "true")
       document.body.classList.remove("iec-modal-open")
-      // Esperar a que termine la transición antes de ocultar del DOM
       clearTimeout(readyTimer)
       modal.classList.remove("iec-cards-ready")
-      setTimeout(() => {
-        modal.classList.remove("is-closing")
-      }, 500)
+      setTimeout(() => modal.classList.remove("is-closing"), 500)
       previousFocus?.focus()
     }
 
-    const applyFilter = (day: string) => {
-      let visibleCount = 0
-      cards.forEach((card) => {
-        const cardDay = card.dataset.day ?? ""
-        const show = day === "todos" || cardDay === day
-        if (show) {
-          card.style.display = ""
-          visibleCount++
-        } else {
-          card.style.display = "none"
-        }
-      })
-      emptyMsg?.classList.toggle("hidden", visibleCount > 0)
-
-      // Estado visual de los pills — reset y aplica activo
-      filterButtons.forEach((b) => {
-        const isActive = b.dataset.day === day
-        b.classList.toggle("bg-ink-900", isActive)
-        b.classList.toggle("text-paper-50", isActive)
-        b.classList.toggle("bg-paper-50", !isActive)
-        b.classList.toggle("text-ink-900", !isActive && !b.disabled)
-        b.classList.toggle("border", !isActive)
-        b.classList.toggle("border-ink-900/15", !isActive && !b.disabled)
-      })
-    }
-
-    // Wire up: abrir
+    // Wire up: abrir / cerrar
     openBtn?.addEventListener("click", openModal)
-
-    // Wire up: cerrar (X, backdrop, footer CTA)
     modal?.querySelectorAll<HTMLElement>("[data-iec-close]").forEach((el) => {
       el.addEventListener("click", (e) => {
-        // Si es link (Contáctanos), permitir navegación DESPUÉS de cerrar
-        const isLink = el.tagName === "A"
-        if (!isLink) e.preventDefault()
+        if (el.tagName !== "A") e.preventDefault()
         closeModal()
       })
     })
-
-    // Wire up: Escape para cerrar
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modal?.classList.contains("is-open")) {
-        closeModal()
-      }
+      if (e.key === "Escape" && modal?.classList.contains("is-open")) closeModal()
     })
 
-    // Wire up: filtros por día
-    filterButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const day = btn.dataset.day ?? "todos"
-        applyFilter(day)
-      })
+    // Wire up: filtros por día (delegación → sigue funcionando aunque
+    // los pills se re-habiliten al llegar datos del ERP)
+    filterWrap?.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".iec-day-btn")
+      if (!btn || btn.disabled || !filterWrap.contains(btn)) return
+      applyFilter(btn.dataset.day ?? "todos")
     })
+
+    // ── Auto-conexión con el ERP: si responde con IECs, reemplaza el
+    //    contenido fijo. Si no (ERP offline o sin datos), se queda el fallback.
+    ;(async () => {
+      if (!erpEnabled() || !listEl || !filterWrap) return
+      const items = await fetchIecs()
+      if (!items || items.length === 0) return
+      listEl.innerHTML = items.map((iec, i) => cardHtml(iec, i)).join("")
+      const activos = new Set(items.map((i) => i.dia))
+      filterWrap.querySelectorAll<HTMLButtonElement>(".iec-day-btn").forEach((btn) => {
+        const day = btn.dataset.day ?? ""
+        if (day === "todos") return
+        setDayEnabled(btn, activos.has(day))
+      })
+      applyFilter(currentDay)
+    })()
   </script>
 </section>

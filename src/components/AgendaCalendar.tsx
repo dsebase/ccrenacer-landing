@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import {
   actividades,
@@ -6,6 +6,7 @@ import {
   type Actividad,
   type Categoria,
 } from "../lib/agenda"
+import { erpEnabled, fetchEventos, type EventoPublic } from "../lib/erp"
 
 const MESES = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -16,16 +17,21 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
 const pad = (n: number) => String(n).padStart(2, "0")
 const iso = (y: number, m: number, d: number) => `${y}-${pad(m + 1)}-${pad(d)}`
 
-// Actividades que caen en una fecha concreta (semanales por día + especiales por fecha)
-function actividadesDe(y: number, m: number, d: number): Actividad[] {
-  const fecha = iso(y, m, d)
-  const js = new Date(y, m, d).getDay()
-  return actividades
-    .filter((a) =>
-      a.tipo === "weekly" ? a.diaSemana === js : a.fecha === fecha
-    )
-    .sort((a, b) => a.hora.localeCompare(b.hora))
-}
+// Normaliza la categoría que manda el ERP a las de la agenda (con color de marca).
+const CATS: Categoria[] = ["Servicio", "Jóvenes", "Oración", "Adoración", "Bautismos", "Conferencia"]
+const normCat = (c: string): Categoria =>
+  CATS.find((k) => k.toLowerCase() === (c || "").toLowerCase()) ?? "Conferencia"
+
+// Un evento del ERP → actividad "especial" del calendario.
+const eventoToActividad = (e: EventoPublic): Actividad => ({
+  tipo: "special",
+  fecha: e.fecha,
+  hora: e.hora || "",
+  titulo: e.titulo,
+  lugar: e.lugar || "",
+  categoria: normCat(e.categoria),
+  descripcion: e.descripcion || "",
+})
 
 export default function AgendaCalendar() {
   const hoy = new Date()
@@ -34,6 +40,32 @@ export default function AgendaCalendar() {
   const [sel, setSel] = useState<number>(hoy.getDate())
 
   const isoHoy = iso(hoy.getFullYear(), hoy.getMonth(), hoy.getDate())
+
+  // Datos: arranca con los fijos (fallback). Si el ERP está online y trae
+  // eventos marcados "Mostrar en la web", reemplaza los especiales (mantiene
+  // los servicios semanales, que no viven en el ERP).
+  const [acts, setActs] = useState<Actividad[]>(actividades)
+  useEffect(() => {
+    if (!erpEnabled()) return
+    let vivo = true
+    fetchEventos().then((items) => {
+      if (!vivo || !items || items.length === 0) return
+      const semanales = actividades.filter((a) => a.tipo === "weekly")
+      setActs([...semanales, ...items.map(eventoToActividad)])
+    })
+    return () => {
+      vivo = false
+    }
+  }, [])
+
+  // Actividades que caen en una fecha concreta (semanales por día + especiales por fecha)
+  const actividadesDe = (yy: number, mm: number, dd: number): Actividad[] => {
+    const fecha = iso(yy, mm, dd)
+    const js = new Date(yy, mm, dd).getDay()
+    return acts
+      .filter((a) => (a.tipo === "weekly" ? a.diaSemana === js : a.fecha === fecha))
+      .sort((a, b) => a.hora.localeCompare(b.hora))
+  }
 
   // Construcción de la grilla (semanas empiezan el lunes)
   const celdas = useMemo(() => {
@@ -64,12 +96,12 @@ export default function AgendaCalendar() {
 
   // Próximas actividades especiales (para el panel cuando no hay día elegido)
   const proximos = useMemo(() => {
-    return actividades
+    return acts
       .filter((a): a is Extract<Actividad, { tipo: "special" }> => a.tipo === "special")
       .filter((a) => a.fecha >= isoHoy)
       .sort((a, b) => a.fecha.localeCompare(b.fecha))
       .slice(0, 4)
-  }, [isoHoy])
+  }, [isoHoy, acts])
 
   return (
     <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6 lg:gap-10 items-start">
