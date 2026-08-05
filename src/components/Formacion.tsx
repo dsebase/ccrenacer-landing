@@ -241,7 +241,7 @@ export default function Formacion() {
   return (
     <section
       id="proceso"
-      className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden bg-ink-950 text-paper-50 pt-28 pb-16 lg:py-20"
+      className="relative flex min-h-[100svh] snap-start flex-col justify-center overflow-hidden bg-ink-950 text-paper-50 pt-28 pb-16 [scroll-margin-top:-120px] lg:py-20"
     >
       {/* ── Fondo degradado CSS (sin WebGL) — imita el mesh oscuro con glow
              celeste. Evita el bug de "negro" por pérdida de contexto WebGL. ── */}
