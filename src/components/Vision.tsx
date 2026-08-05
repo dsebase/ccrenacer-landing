@@ -48,7 +48,7 @@ export default function Vision() {
   return (
     <section
       id="vision"
-      className="relative pt-44 lg:pt-56 pb-32 lg:pb-44 bg-paper-50"
+      className="relative pt-28 lg:pt-36 pb-32 lg:pb-44 bg-paper-50"
     >
       <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
         {/* Encabezado */}
