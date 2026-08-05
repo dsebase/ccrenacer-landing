@@ -49,6 +49,9 @@
     /* Deja espacio para el navbar flotante (~90px) al saltar a una ancla,
        para que el título/eyebrow de cada sección no quede tapado. */
     scroll-padding-top: 120px;
+    /* Encaje suave: solo las secciones con snap-start (p. ej. Formación 06)
+       se alinean a pantalla completa al acercarse, ocultando la línea del borde. */
+    scroll-snap-type: y proximity;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -59,6 +62,12 @@
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
     overflow-x: hidden;
+  }
+  /* Los islands de Astro (client:*) usan display:inline por defecto, lo que
+     deja un hueco de línea base que muestra el fondo blanco del body — visible
+     como línea blanca sobre secciones oscuras. contents elimina ese hueco. */
+  astro-island {
+    display: contents;
   }
   ::selection {
     background: transparent;

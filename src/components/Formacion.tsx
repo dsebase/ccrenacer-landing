@@ -242,11 +242,9 @@ export default function Formacion() {
   return (
     <section
       id="proceso"
-      className="relative overflow-hidden bg-ink-950 text-paper-50 pt-28 lg:pt-36 pb-28 lg:pb-36"
+      className="relative flex min-h-[100svh] snap-start flex-col justify-center overflow-hidden bg-ink-950 text-paper-50 py-16 [scroll-margin-top:-120px] lg:py-20"
     >
-      {/* ── Fondo oscuro casi negro con tinte teal (estilo footer) + mesh.
-             Feather CORTO en el borde: el oscuro llena la sección al verla y la
-             transición solo se nota al subir al límite entre secciones ── */}
+      {/* ── Mesh gradient de fondo (estilo footer) ── */}
       <div className="absolute -inset-4 z-0" aria-hidden="true">
         <MeshGradient
           colors={["#050a0d", "#07141a", "#0e4256", "#061016", "#0a2530", "#040a0e"]}
