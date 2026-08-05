@@ -49,10 +49,6 @@
     /* Deja espacio para el navbar flotante (~90px) al saltar a una ancla,
        para que el título/eyebrow de cada sección no quede tapado. */
     scroll-padding-top: 120px;
-    /* Encaje a pantalla completa: SOLO la sección 06 (Formación) tiene
-       snap-start, así llena toda la pantalla al llegar. La 09 quedó sin snap
-       para que su scroll sea libre. */
-    scroll-snap-type: y proximity;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
