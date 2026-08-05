@@ -36,7 +36,7 @@ export default function Ministerios({ ministerios }: Props) {
         >
           <div>
             <p className="eyebrow mb-6">
-              <span>06 · Ministerios</span>
+              <span>07 · Ministerios</span>
             </p>
             <h2 className="font-display font-light text-[clamp(2.5rem,6vw,6rem)] leading-[1] text-ink-900 tracking-[-0.025em] text-balance">
               Donde puedes<br />

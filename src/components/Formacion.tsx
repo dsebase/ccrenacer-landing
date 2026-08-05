@@ -267,13 +267,13 @@ export default function Formacion() {
             transition={{ duration: 0.8, ease: EASE }}
           >
             <p className="eyebrow eyebrow-light text-spirit-200/80 mb-6">
-              <span>05 · Nuestra formación</span>
+              <span>06 · Nuestra formación</span>
               <span className="text-spirit-400">●</span>
               <span>El proceso de renacer</span>
             </p>
             <h2 className="font-display font-light text-[clamp(2.5rem,6vw,5.5rem)] leading-[1] tracking-[-0.025em] text-balance">
-              Formados<br />
-              <span className="italic text-spirit-400">para servir.</span>
+              Nuestro proceso<br />
+              <span className="italic text-spirit-400">formativo.</span>
             </h2>
           </motion.div>
           <motion.p
@@ -579,12 +579,11 @@ function ContenidoFaseIII() {
       </Bloque>
 
       <Bloque>
-        <Kicker>Modalidad e inversión</Kicker>
+        <Kicker>Modalidad</Kicker>
         <ul className="space-y-2.5">
           {[
             ["Modalidad", "Virtual · plataforma Zoom"],
             ["Matrícula", "Beca"],
-            ["Mensualidad", "S/. 90.00"],
             ["Clases", "Martes de 8:00 a 10:00 p. m."],
             ["Material de estudio", "A disposición del alumno en forma física o virtual"],
           ].map(([k, v]) => (
