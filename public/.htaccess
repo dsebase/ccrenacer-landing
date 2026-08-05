@@ -1,0 +1,43 @@
+# ══════════════════════════════════════════════════════════════════════
+#  Seguridad · Comunidad Cristiana Renacer  (Apache / cPanel)
+#  Este archivo sale del build (public/) hacia public_html/.
+# ══════════════════════════════════════════════════════════════════════
+
+# ── Forzar HTTPS ──
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ── Cabeceras de seguridad ──
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+  # HSTS: obliga HTTPS por 1 año. Deja tu SSL (AutoSSL de cPanel) activo antes.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # Política de contenido (CSP). Permite solo los orígenes que el sitio usa:
+  #   - Cloudflare Turnstile (captcha)   - YouTube (embeds/miniaturas)
+  #   - Google Fonts                     - Facebook (embeds del live)
+  # Si agregas otro servicio externo (analytics, mapa, etc.) añádelo aquí.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.youtube.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://img.youtube.com https://*.ytimg.com https://www.google.com; frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.facebook.com https://web.facebook.com; connect-src 'self' https://challenges.cloudflare.com https://www.youtube.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+</IfModule>
+
+# ── Proteger el config con secretos y la plantilla ──
+<FilesMatch "^config(\.example)?\.php$">
+  Require all denied
+</FilesMatch>
+
+# ── Bloquear la carpeta de datos del rate-limit ──
+RedirectMatch 404 ^/\.data(/.*)?$
+
+# ── Bloquear archivos ocultos y de respaldo ──
+<FilesMatch "(^\.(?!well-known)|\.(bak|old|log|ini|sql|env)$)">
+  Require all denied
+</FilesMatch>
+
+# ── Evitar listado de directorios ──
+Options -Indexes

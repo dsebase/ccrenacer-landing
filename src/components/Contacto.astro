@@ -1,6 +1,10 @@
 ---
 import { images } from "../lib/images"
 
+// Clave PÚBLICA de Cloudflare Turnstile (la site key, no la secreta).
+// Se define en .env como PUBLIC_TURNSTILE_SITE_KEY antes de hacer el build.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? ""
+
 const inputClass =
   "w-full bg-transparent border-b border-ink-900/15 focus:border-ink-900 px-0 py-3 text-ink-900 placeholder-ink-300 focus:outline-none transition-colors"
 const labelClass =
@@ -45,8 +49,17 @@ const paises = [
         <ul class="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-x-10 gap-y-5 pb-5 mb-5 border-b border-ink-900/10">
           <li>
             <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-spirit-500 mb-2">Correo</p>
-            <a href="mailto:info@ccrenacer.com" class="font-display text-base lg:text-lg text-ink-900 link-underline whitespace-nowrap" data-cursor="hover">
-              info@ccrenacer.com
+            <!-- Correo OFUSCADO: el email real no aparece en el HTML; lo arma el JS.
+                 Los bots que raspan el código solo ven "info [arroba] ccrenacer.com". -->
+            <a
+              id="mail-link"
+              href="#"
+              data-u="info"
+              data-d="ccrenacer.com"
+              class="font-display text-base lg:text-lg text-ink-900 link-underline whitespace-nowrap"
+              data-cursor="hover"
+            >
+              <span class="mail-text">info<span aria-hidden="true"> [arroba] </span>ccrenacer.com</span>
             </a>
           </li>
           <li>
@@ -58,8 +71,9 @@ const paises = [
         </ul>
 
         <form
+          id="contact-form"
           class="surface-light rounded-[28px] p-6 lg:p-7 space-y-3"
-          action="https://formspree.io/f/xxxxxx"
+          action="/contacto.php"
           method="POST"
         >
           <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-ink-400">
@@ -114,6 +128,22 @@ const paises = [
             <textarea id="mensaje" name="mensaje" rows="3" class={`${inputClass} resize-none`} placeholder="Cuéntanos un poco..."></textarea>
           </div>
 
+          <!-- Honeypot anti-bot: invisible para humanos; los bots lo llenan. -->
+          <div aria-hidden="true" style="position:absolute; left:-5000px; width:1px; height:1px; overflow:hidden;">
+            <label>No llenar este campo
+              <input type="text" name="website" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
+          <!-- Time-trap: el JS pone la marca de tiempo al cargar la página. -->
+          <input type="hidden" name="ts" id="ts-field" value="" />
+
+          {turnstileSiteKey && (
+            <div class="cf-turnstile pt-1" data-sitekey={turnstileSiteKey} data-theme="light" data-language="es"></div>
+          )}
+
+          <div id="form-status" role="status" aria-live="polite" class="hidden"></div>
+
           <button type="submit" class="btn-primary w-full justify-center" data-cursor="hover">
             <span>Enviar mensaje</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -125,3 +155,76 @@ const paises = [
     </div>
   </div>
 </section>
+
+<!-- Cloudflare Turnstile (captcha invisible) -->
+<script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+
+<script>
+  // ── Correo ofuscado: arma el email real solo del lado del navegador ──
+  const mail = document.getElementById("mail-link")
+  if (mail instanceof HTMLAnchorElement) {
+    const addr = `${mail.dataset.u}@${mail.dataset.d}`
+    mail.href = `mailto:${addr}`
+    const label = mail.querySelector(".mail-text")
+    if (label) label.textContent = addr
+  }
+
+  // ── Formulario seguro: envío AJAX + estados en pantalla ──
+  const form = document.getElementById("contact-form")
+  const statusEl = document.getElementById("form-status")
+  const tsField = document.getElementById("ts-field")
+  if (tsField instanceof HTMLInputElement) tsField.value = String(Date.now())
+
+  function setStatus(msg: string, ok: boolean) {
+    if (!statusEl) return
+    statusEl.textContent = msg
+    statusEl.className =
+      "text-sm rounded-xl px-4 py-3 " +
+      (ok ? "bg-emerald-500/10 text-emerald-700" : "bg-red-500/10 text-red-700")
+  }
+
+  const MSGS: Record<string, string> = {
+    captcha: "Confirma que no eres un robot e inténtalo de nuevo.",
+    timing: "Espera un momento antes de enviar e inténtalo otra vez.",
+    rate: "Has enviado varios mensajes. Vuelve a intentarlo en unos minutos.",
+    validation: "Revisa los campos: hay algo incompleto o inválido.",
+    origin: "Solicitud no válida.",
+    send: "No pudimos enviar el correo. Escríbenos directamente por correo.",
+    server_misconfigured: "El formulario aún no está configurado. Escríbenos por correo.",
+    default: "No pudimos enviar el mensaje. Inténtalo de nuevo en un momento.",
+  }
+  const msgFor = (err?: string) =>
+    MSGS[String(err ?? "").split(":")[0]] ?? MSGS.default
+
+  if (form instanceof HTMLFormElement) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault()
+      const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null
+      const original = btn ? btn.innerHTML : ""
+      if (btn) { btn.disabled = true; btn.textContent = "Enviando…" }
+      if (statusEl) statusEl.classList.remove("hidden")
+      setStatus("Enviando tu mensaje…", true)
+      try {
+        const res = await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { Accept: "application/json" },
+        })
+        const data = await res.json().catch(() => ({ ok: false }))
+        if (res.ok && data.ok) {
+          form.reset()
+          setStatus("¡Gracias! Tu mensaje fue enviado. Te responderemos pronto.", true)
+        } else {
+          setStatus(msgFor(data.error), false)
+        }
+      } catch {
+        setStatus("No pudimos enviar el mensaje. Revisa tu conexión e inténtalo de nuevo.", false)
+      } finally {
+        const ts: any = (window as any).turnstile
+        if (ts && typeof ts.reset === "function") ts.reset()
+        if (tsField instanceof HTMLInputElement) tsField.value = String(Date.now())
+        if (btn) { btn.disabled = false; btn.innerHTML = original }
+      }
+    })
+  }
+</script>

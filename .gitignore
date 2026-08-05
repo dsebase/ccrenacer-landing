@@ -16,6 +16,10 @@ pnpm-debug.log*
 .env.production
 .env.local
 
+# secretos y datos del formulario (se crean en el hosting, nunca en git)
+public/config.php
+public/.data/
+
 # macOS-specific files
 .DS_Store
 
