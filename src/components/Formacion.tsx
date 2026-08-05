@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { createPortal } from "react-dom"
-import { MeshGradient } from "@paper-design/shaders-react"
 import { images } from "../lib/images"
 
 const EASE = [0.33, 1, 0.68, 1] as const
@@ -244,16 +243,16 @@ export default function Formacion() {
       id="proceso"
       className="relative flex min-h-[100svh] snap-start flex-col justify-center overflow-hidden bg-ink-950 text-paper-50 py-16 [scroll-margin-top:-120px] lg:py-20"
     >
-      {/* ── Mesh gradient de fondo (estilo footer) ── */}
-      <div className="absolute -inset-4 z-0" aria-hidden="true">
-        <MeshGradient
-          colors={["#050a0d", "#07141a", "#0e4256", "#061016", "#0a2530", "#040a0e"]}
-          distortion={0.6}
-          swirl={0.4}
-          speed={0}
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-        />
-      </div>
+      {/* ── Fondo degradado CSS (sin WebGL) — imita el mesh oscuro con glow
+             celeste. Evita el bug de "negro" por pérdida de contexto WebGL. ── */}
+      <div
+        className="absolute inset-0 z-0"
+        aria-hidden="true"
+        style={{
+          background:
+            "radial-gradient(75% 55% at 47% 38%, rgba(23,156,218,0.16), transparent 62%), radial-gradient(115% 85% at 50% 30%, rgba(14,66,86,0.55), rgba(10,37,48,0.26) 45%, transparent 74%), radial-gradient(85% 65% at 63% 84%, rgba(12,60,80,0.32), transparent 68%), #060f16",
+        }}
+      />
 
       {/* ── Contenido ── */}
       <div className="relative z-10 mx-auto max-w-[1400px] px-6 lg:px-10">
