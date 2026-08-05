@@ -330,9 +330,15 @@ const diasActivos = new Set(iecs.map((i) => i.dia))
       transform: translateY(0) scale(1);
     }
 
-    /* Cards de IECs entran en cascada al abrir el modal */
+    /* Cards de IECs entran en cascada al abrir el modal.
+       Escalonado corto y con tope, para que aun con muchas IECs la entrada sea rápida. */
     .iec-modal.is-open .iec-card {
-      animation: iec-card-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) calc(0.25s + var(--i, 0) * 0.05s) backwards;
+      animation: iec-card-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) calc(min(var(--i, 0) * 0.018s, 0.36s)) backwards;
+    }
+    /* Una vez terminada la entrada, se desactiva la animación (clase la agrega el JS)
+       para que al FILTRAR las cards aparezcan al instante, sin re-disparar la cascada. */
+    .iec-modal.iec-cards-ready .iec-card {
+      animation: none;
     }
     @keyframes iec-card-in {
       from { opacity: 0; transform: translateY(16px); }
@@ -391,15 +397,22 @@ const diasActivos = new Set(iecs.map((i) => i.dia))
 
     let previousFocus: HTMLElement | null = null
 
+    let readyTimer: ReturnType<typeof setTimeout> | undefined
+
     const openModal = () => {
       if (!modal) return
       previousFocus = document.activeElement as HTMLElement | null
       modal.classList.remove("is-closing")
+      modal.classList.remove("iec-cards-ready")
       modal.classList.add("is-open")
       modal.setAttribute("aria-hidden", "false")
       document.body.classList.add("iec-modal-open")
       // Reset filtro al estado "Todos" cada vez que se abre
       applyFilter("todos")
+      // Tras la cascada de entrada, desactiva la animación para que
+      // filtrar por día muestre las cards al instante (sin re-disparar la cascada).
+      clearTimeout(readyTimer)
+      readyTimer = setTimeout(() => modal.classList.add("iec-cards-ready"), 850)
       // Foco al primer botón cliqueable dentro del modal
       requestAnimationFrame(() => {
         const closeBtn = modal.querySelector<HTMLButtonElement>("[data-iec-close]")
@@ -414,6 +427,8 @@ const diasActivos = new Set(iecs.map((i) => i.dia))
       modal.setAttribute("aria-hidden", "true")
       document.body.classList.remove("iec-modal-open")
       // Esperar a que termine la transición antes de ocultar del DOM
+      clearTimeout(readyTimer)
+      modal.classList.remove("iec-cards-ready")
       setTimeout(() => {
         modal.classList.remove("is-closing")
       }, 500)
