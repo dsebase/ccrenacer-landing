@@ -25,7 +25,7 @@ const sizeClasses: Record<string, string> = {
 
 export default function Ministerios({ ministerios }: Props) {
   return (
-    <section id="ministerios" className="relative py-32 lg:py-44 bg-paper-50">
+    <section id="ministerios" className="relative pt-28 lg:pt-36 pb-32 lg:pb-44 bg-paper-50">
       <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

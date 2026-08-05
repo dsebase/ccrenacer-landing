@@ -146,7 +146,7 @@ export default function Manifiesto({ videoSrc, videoWebm, poster }: ManifiestoPr
     <section
       id="manifiesto"
       ref={ref}
-      className="relative py-28 lg:py-44 overflow-hidden bg-ink-950 text-paper-50 grain grain-dark"
+      className="relative pt-28 lg:pt-36 pb-28 lg:pb-44 overflow-hidden bg-ink-950 text-paper-50 grain grain-dark"
     >
       {/* Video de fondo (reemplazable) con poster de fallback.
           z-0 (no negativo) para quedar por encima del bg-ink-950 de la sección. */}
