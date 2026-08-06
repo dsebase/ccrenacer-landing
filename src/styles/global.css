@@ -60,6 +60,21 @@
     font-feature-settings: "ss01", "cv11";
     overflow-x: hidden;
   }
+  /* Manito (pointer) en TODO lo clickeable — incluye los <div> interactivos
+     marcados con data-cursor="hover" (p.ej. las cards de la sección 06 y su
+     "Ver contenido"), que por ser <div> no mostraban la manito por defecto. */
+  a[href],
+  button,
+  [role="button"],
+  [data-cursor="hover"],
+  label[for],
+  summary {
+    cursor: pointer;
+  }
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
   /* Los islands de Astro (client:*) usan display:inline por defecto, lo que
      deja un hueco de línea base que muestra el fondo blanco del body — visible
      como línea blanca sobre secciones oscuras. contents elimina ese hueco. */
