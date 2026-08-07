@@ -39,13 +39,13 @@ function no_crlf(string $s): string {
 }
 
 // ── Configuración ──────────────────────────────────────────────────
+// config.php es OPCIONAL: si no existe, se usan los valores por defecto
+// (destino info@ccrenacer.com, sin Turnstile). Crea config.php solo si
+// quieres personalizar el destino, activar Turnstile, etc.
 $configPath = __DIR__ . '/config.php';
-if (!is_file($configPath)) {
-    respond(false, 'server_misconfigured', 500);
-}
-$config = require $configPath;
+$config = is_file($configPath) ? require $configPath : [];
 if (!is_array($config)) {
-    respond(false, 'server_misconfigured', 500);
+    $config = [];
 }
 
 // ── 1. Solo POST ───────────────────────────────────────────────────
