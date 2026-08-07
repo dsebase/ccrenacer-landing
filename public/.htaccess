@@ -23,7 +23,14 @@
   #   - Cloudflare Turnstile (captcha)   - YouTube (embeds/miniaturas)
   #   - Google Fonts                     - Facebook (embeds del live)
   # Si agregas otro servicio externo (analytics, mapa, etc.) añádelo aquí.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.youtube.com https://www.google.com https://elfsightcdn.com https://static.elfsight.com https://apps.elfsight.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://static.elfsight.com; font-src 'self' https://fonts.gstatic.com https://static.elfsight.com; img-src 'self' data: blob: https://sistema.ccrenacer.com https://i.ytimg.com https://img.youtube.com https://*.ytimg.com https://www.google.com https://images.unsplash.com https://static.elfsight.com https://*.elfsight.com https://*.cdninstagram.com https://*.fbcdn.net https://scontent.cdninstagram.com; frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.facebook.com https://web.facebook.com https://www.instagram.com; connect-src 'self' https://sistema.ccrenacer.com https://challenges.cloudflare.com https://www.youtube.com https://static.elfsight.com https://core.service.elfsight.com https://*.elfsight.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+  # CSP pragmática: permite recursos de terceros por HTTPS (YouTube, Facebook,
+  # Instagram/Elfsight, Cloudflare, Google Fonts) sin tener que enumerar cada
+  # dominio, PERO conserva las protecciones críticas:
+  #   frame-ancestors 'self'  → nadie puede incrustar tu sitio (anti-clickjacking)
+  #   form-action 'self'      → el formulario solo puede enviar a tu propio dominio
+  #   object-src 'none'       → sin plugins Flash/obsoletos
+  #   base-uri 'self'         → sin secuestro de <base>
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; frame-src 'self' https:; connect-src 'self' https:; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
 </IfModule>
 
 # ── Proteger el config con secretos y la plantilla ──
