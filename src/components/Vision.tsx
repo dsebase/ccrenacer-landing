@@ -107,7 +107,7 @@ export default function Vision() {
                 }
                 transition={{ duration: 0.6, ease: EASE }}
                 style={isDesktop ? undefined : { flexGrow: 0, flexShrink: 0 }}
-                className="group relative basis-0 min-w-0 overflow-hidden rounded-[28px] text-left outline-none ring-spirit-400/70 focus-visible:ring-2"
+                className={`group relative ${isDesktop ? "basis-0" : "w-full"} min-w-0 overflow-hidden rounded-[28px] text-left outline-none ring-spirit-400/70 focus-visible:ring-2`}
               >
                 {/* Imagen de fondo — clara y nítida */}
                 <img

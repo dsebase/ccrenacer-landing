@@ -219,6 +219,13 @@ function PhaseCard({
         </div>
         </div>
       </div>
+
+      {/* Pista de toque — solo en dispositivos táctiles (sin hover) */}
+      <div className="tap-hint absolute inset-x-0 bottom-0 z-30 flex justify-start p-4">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-ink-950/55 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-paper-50 ring-1 ring-white/20 backdrop-blur-sm">
+          Toca para ver <Arrow />
+        </span>
+      </div>
       </div>
     </motion.button>
   )

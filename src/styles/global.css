@@ -75,6 +75,13 @@
   [aria-disabled="true"] {
     cursor: not-allowed;
   }
+  /* Pista "toca para ver" — solo en dispositivos táctiles (sin hover).
+     En desktop (mouse) se oculta porque el hover ya revela el contenido. */
+  @media (hover: hover) and (pointer: fine) {
+    .tap-hint {
+      display: none;
+    }
+  }
   /* Los islands de Astro (client:*) usan display:inline por defecto, lo que
      deja un hueco de línea base que muestra el fondo blanco del body — visible
      como línea blanca sobre secciones oscuras. contents elimina ese hueco. */
