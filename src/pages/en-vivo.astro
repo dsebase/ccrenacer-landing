@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro"
 import Reveal from "../components/Reveal.tsx"
 import { images } from "../lib/images"
-import { social, getYouTubeVideos, ytThumb, ytWatch } from "../lib/social"
+import { social } from "../lib/social"
 
 const facebook = social.facebook
 const youtube = social.youtube
@@ -24,20 +24,9 @@ const fbEmbed = fbVideoHref
   : ""
 
 // ─────────────────────────────────────────────────────────────
-// YOUTUBE (tira 1) · AUTOMÁTICO vía RSS del canal (sin API key).
-// Configurá PUBLIC_YOUTUBE_CHANNEL_ID en el .env y se traen solos los últimos
-// videos con su thumbnail real. Si no hay channel ID o falla, usa el placeholder.
-const ytFetched = await getYouTubeVideos(social.youtubeChannelId, 8)
-const ytVideos = ytFetched.length
-  ? ytFetched
-  : [
-      { id: "dQw4w9WgXcQ", titulo: "El nuevo nacimiento", fecha: "Domingo · 12 May" },
-      { id: "JGwWNGJdvx8", titulo: "Una familia en misión", fecha: "Domingo · 5 May" },
-      { id: "kJQP7kiw5Fk", titulo: "Adorar en espíritu y verdad", fecha: "28 Abr" },
-      { id: "OPf0YbXqDm0", titulo: "El poder de la comunidad", fecha: "21 Abr" },
-      { id: "9bZkp7q19f0", titulo: "Llamados a las naciones", fecha: "14 Abr" },
-      { id: "fJ9rUzIMcZQ", titulo: "Bautismos de verano", fecha: "Especial" },
-    ]
+// YOUTUBE (tira 1) · Se cargan en el NAVEGADOR con la API oficial de YouTube
+// (Data API v3). Config en .env: PUBLIC_YOUTUBE_API_KEY + PUBLIC_YOUTUBE_CHANNEL_ID.
+// El RSS público se descartó porque YouTube bloquea esas peticiones automáticas.
 
 // ─────────────────────────────────────────────────────────────
 // INSTAGRAM (tira 2) · feed real automático vía widget Elfsight
@@ -152,21 +141,15 @@ const ytVideos = ytFetched.length
 
     <div class="relative group/strip">
       <div class="scroll-strip overflow-x-auto cursor-grab" id="strip-yt">
-      <div class="flex gap-5 px-6 lg:px-10 pb-2 min-w-min">
-        {ytVideos.map((v) => (
-          <a href={ytWatch(v.id)} target="_blank" rel="noopener" data-yt={v.id} data-yt-title={v.titulo} class="group shrink-0 w-[300px] sm:w-[340px]" data-cursor="hover">
-            <div class="relative rounded-[18px] overflow-hidden bg-ink-900">
-              <img src={ytThumb(v.id)} alt={v.titulo} style="aspect-ratio:16/9" class="w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110" loading="lazy" />
-              <div class="absolute inset-0 bg-gradient-to-t from-ink-950/55 to-transparent"></div>
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-14 h-14 rounded-full bg-red-600 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 shadow-lg">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" class="ml-0.5"><path d="M8 5v14l11-7z"/></svg>
-                </div>
-              </div>
-            </div>
-            <p class="font-mono text-[10px] uppercase tracking-[0.25em] text-spirit-500 mt-4 mb-1.5">{v.fecha}</p>
-            <h3 class="font-display text-xl text-ink-900 leading-tight group-hover:text-spirit-500 transition-colors">{v.titulo}</h3>
-          </a>
+      <div class="flex gap-5 px-6 lg:px-10 pb-2 min-w-min" id="yt-cards">
+        {/* Tarjetas dinámicas: el script las llena con la API de YouTube.
+            Mientras cargan se muestran estos esqueletos. */}
+        {[0, 1, 2, 3].map(() => (
+          <div class="yt-skeleton shrink-0 w-[300px] sm:w-[340px]" aria-hidden="true">
+            <div class="rounded-[18px] bg-ink-900/10 animate-pulse" style="aspect-ratio:16/9"></div>
+            <div class="h-3 w-20 bg-ink-900/10 rounded mt-4 mb-2 animate-pulse"></div>
+            <div class="h-5 w-52 bg-ink-900/10 rounded animate-pulse"></div>
+          </div>
         ))}
       </div>
       </div>
@@ -351,11 +334,12 @@ const ytVideos = ytFetched.length
       document.body.style.overflow = ""
     }
 
-    document.querySelectorAll<HTMLElement>("[data-yt]").forEach((card) => {
-      card.addEventListener("click", (e) => {
-        e.preventDefault()
-        openVideo(card.dataset.yt!, card.dataset.ytTitle ?? "")
-      })
+    // Delegación: funciona también con las tarjetas que inserta el script de la API.
+    document.addEventListener("click", (e) => {
+      const card = (e.target as HTMLElement).closest<HTMLElement>("[data-yt]")
+      if (!card) return
+      e.preventDefault()
+      openVideo(card.dataset.yt!, card.dataset.ytTitle ?? "")
     })
     closeBtn?.addEventListener("click", closeVideo)
     modal?.addEventListener("click", (e) => {
@@ -364,6 +348,59 @@ const ytVideos = ytFetched.length
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeVideo()
     })
+
+    // ── Últimos videos de YouTube · API oficial (Data API v3), del lado del
+    //    navegador. La key va restringida a este dominio (segura de exponer).
+    const YT_KEY = import.meta.env.PUBLIC_YOUTUBE_API_KEY ?? ""
+    const YT_CHANNEL = import.meta.env.PUBLIC_YOUTUBE_CHANNEL_ID ?? ""
+    const ytContainer = document.getElementById("yt-cards")
+
+    const YT_MESES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+    const ytEsc = (s: unknown) =>
+      String(s ?? "").replace(/[&<>"']/g, (c) =>
+        ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" })[c] as string)
+
+    const ytCard = (id: string, title: string, fecha: string, thumb: string) => `
+      <a href="https://www.youtube.com/watch?v=${ytEsc(id)}" target="_blank" rel="noopener" data-yt="${ytEsc(id)}" data-yt-title="${ytEsc(title)}" class="group shrink-0 w-[300px] sm:w-[340px]" data-cursor="hover">
+        <div class="relative rounded-[18px] overflow-hidden bg-ink-900">
+          <img src="${ytEsc(thumb)}" alt="${ytEsc(title)}" style="aspect-ratio:16/9" class="w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink-950/55 to-transparent"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-14 h-14 rounded-full bg-red-600 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 shadow-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" class="ml-0.5"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <p class="font-mono text-[10px] uppercase tracking-[0.25em] text-spirit-500 mt-4 mb-1.5">${ytEsc(fecha)}</p>
+        <h3 class="font-display text-xl text-ink-900 leading-tight group-hover:text-spirit-500 transition-colors">${ytEsc(title)}</h3>
+      </a>`
+
+    ;(async () => {
+      if (!ytContainer || !YT_KEY || !YT_CHANNEL) return
+      const uploads = "UU" + YT_CHANNEL.slice(2) // playlist de subidas del canal
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=8&playlistId=${uploads}&key=${YT_KEY}`
+      try {
+        const res = await fetch(url)
+        if (!res.ok) return
+        const data = await res.json()
+        const items = (data.items || [])
+          .map((it: any) => it.snippet)
+          .filter((s: any) => s?.resourceId?.videoId && s.title !== "Private video" && s.title !== "Deleted video")
+        if (!items.length) return
+        ytContainer.innerHTML = items
+          .map((s: any) => {
+            const id = s.resourceId.videoId
+            const d = new Date(s.publishedAt)
+            const fecha = `${d.getDate()} ${YT_MESES[d.getMonth()]}`.toUpperCase()
+            const t = s.thumbnails || {}
+            const thumb = (t.high || t.medium || t.default || {}).url || `https://img.youtube.com/vi/${id}/hqdefault.jpg`
+            return ytCard(id, s.title, fecha, thumb)
+          })
+          .join("")
+      } catch {
+        // Si falla, se quedan los esqueletos y el botón "Ver YouTube" siempre está.
+      }
+    })()
   </script>
 
   <script>
