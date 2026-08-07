@@ -123,7 +123,13 @@ if ($errors) {
 // Destino de los mensajes del formulario. Por defecto: info@ccrenacer.com
 // (se puede sobrescribir en config.php con 'mail_to').
 $to       = (string) ($config['mail_to'] ?? 'info@ccrenacer.com');
-$fromAddr = (string) ($config['mail_from'] ?? 'no-reply@ccrenacer.com');
+// Remitente: DEBE ser una cuenta real del dominio (cPanel/Exim rechaza el envío
+// si el remitente no existe). Por defecto usamos el mismo buzón destino (info@),
+// que sí existe. El visitante queda en Reply-To para poder responderle.
+$fromAddr = (string) ($config['mail_from'] ?? $to);
+if (!filter_var($fromAddr, FILTER_VALIDATE_EMAIL)) {
+    $fromAddr = $to;
+}
 $fromName = no_crlf($nombre . ' ' . $apellido);
 $replyTo  = no_crlf($email);
 
@@ -154,7 +160,10 @@ $headers = implode("\r\n", [
     'X-Mailer: RenacerForm',
 ]);
 
-if (!@mail($to, $subject, $body, $headers)) {
+// El 5º parámetro "-f<correo>" fija el envelope-sender (Return-Path) a una
+// cuenta real del dominio. cPanel/Exim lo necesita para aceptar el correo y
+// para que no lo marque como spam.
+if (!@mail($to, $subject, $body, $headers, '-f' . $fromAddr)) {
     respond(false, 'send', 500);
 }
 respond(true);

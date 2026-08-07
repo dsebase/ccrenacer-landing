@@ -156,8 +156,10 @@ const paises = [
   </div>
 </section>
 
-<!-- Cloudflare Turnstile (captcha invisible) -->
-<script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+<!-- Cloudflare Turnstile (captcha) — solo se carga si hay site key configurada -->
+{turnstileSiteKey && (
+  <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+)}
 
 <script>
   // ── Correo ofuscado: arma el email real solo del lado del navegador ──
@@ -220,10 +222,16 @@ const paises = [
       } catch {
         setStatus("No pudimos enviar el mensaje. Revisa tu conexión e inténtalo de nuevo.", false)
       } finally {
-        const ts: any = (window as any).turnstile
-        if (ts && typeof ts.reset === "function") ts.reset()
+        // Reactivar el botón SIEMPRE (primero, para que nada lo congele).
         if (tsField instanceof HTMLInputElement) tsField.value = String(Date.now())
         if (btn) { btn.disabled = false; btn.innerHTML = original }
+        // Resetear Turnstile solo si existe y hay widget (nunca debe romper el flujo).
+        try {
+          const ts: any = (window as any).turnstile
+          if (ts && typeof ts.reset === "function" && document.querySelector(".cf-turnstile")) {
+            ts.reset()
+          }
+        } catch {}
       }
     })
   }
