@@ -39,7 +39,10 @@ import AgendaCalendar from "../components/AgendaCalendar.tsx"
 
   <section class="relative pb-32 lg:pb-44 bg-paper-50">
     <div class="mx-auto max-w-[1400px] px-6 lg:px-10">
-      <AgendaCalendar client:load />
+      {/* client:only → se renderiza SOLO en el navegador (usa new Date()).
+          Evita el desajuste de hidratación (React #418) entre la fecha del
+          build y la fecha actual del visitante. */}
+      <AgendaCalendar client:only="react" />
     </div>
   </section>
 </Layout>
