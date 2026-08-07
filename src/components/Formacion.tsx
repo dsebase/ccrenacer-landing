@@ -10,19 +10,19 @@ const renacerBooks = [
   {
     n: "1",
     t: "Mi encuentro con Jesús",
-    img: "/img/rncri.PNG",
+    img: "/img/rncri.webp",
     d: `Punto de partida: aceptar que necesitamos una nueva vida e iniciar un cambio radical. "Mi encuentro con Jesús" es más que una experiencia o emoción especial; nos lleva a un cambio interior y profundo que solo ocurre cuando llegamos a Él.`,
   },
   {
     n: "2",
     t: "De la mano con Jesús",
-    img: "/img/rncrii.PNG",
+    img: "/img/rncrii.webp",
     d: `Esta nueva etapa como hijos de Dios nos permite saber que sin Él es imposible caminar. Decidir depender de nuestro Señor Jesús es afirmar cada día nuestros pasos en una nueva vida en Cristo, seguros de que Él nos sostiene de la mano.`,
   },
   {
     n: "3",
     t: "Creciendo con Jesús",
-    img: "/img/rncriii.PNG",
+    img: "/img/rncriii.webp",
     d: `Crecer con Jesús implica acción, continuidad y progreso. Es mirar la vida cristiana desde una realidad Cristo-céntrica, caminando seguros bajo el abrigo del Altísimo. Nunca estamos solos. Gracia y paz.`,
   },
 ]
