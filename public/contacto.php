@@ -77,12 +77,18 @@ if ($ts <= 0 || ($nowMs - $ts) < 3000 || ($nowMs - $ts) > 3600000) {
 }
 
 // ── 5. Turnstile (verificación del lado servidor) ──────────────────
-$token = field('cf-turnstile-response');
-if ($token === '') {
-    respond(false, 'captcha', 400);
-}
-if (!turnstile_verify((string) ($config['turnstile_secret'] ?? ''), $token, (string) ($_SERVER['REMOTE_ADDR'] ?? ''))) {
-    respond(false, 'captcha', 403);
+// OPCIONAL: solo se exige si configuraste 'turnstile_secret' en config.php.
+// Sin él, el formulario igual funciona con honeypot + time-trap + rate-limit
+// + verificación de origen. (Ponlo cuando quieras la protección más fuerte.)
+$turnstileSecret = (string) ($config['turnstile_secret'] ?? '');
+if ($turnstileSecret !== '') {
+    $token = field('cf-turnstile-response');
+    if ($token === '') {
+        respond(false, 'captcha', 400);
+    }
+    if (!turnstile_verify($turnstileSecret, $token, (string) ($_SERVER['REMOTE_ADDR'] ?? ''))) {
+        respond(false, 'captcha', 403);
+    }
 }
 
 // ── 6. Rate-limit por IP ───────────────────────────────────────────
@@ -114,8 +120,10 @@ if ($errors) {
 }
 
 // ── 8. Construcción y envío del correo ─────────────────────────────
-$to       = (string) ($config['mail_to'] ?? 'info@' . $allowedHost);
-$fromAddr = (string) ($config['mail_from'] ?? 'no-reply@' . $allowedHost);
+// Destino de los mensajes del formulario. Por defecto: info@ccrenacer.com
+// (se puede sobrescribir en config.php con 'mail_to').
+$to       = (string) ($config['mail_to'] ?? 'info@ccrenacer.com');
+$fromAddr = (string) ($config['mail_from'] ?? 'no-reply@ccrenacer.com');
 $fromName = no_crlf($nombre . ' ' . $apellido);
 $replyTo  = no_crlf($email);
 
