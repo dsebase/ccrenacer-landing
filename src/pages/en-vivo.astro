@@ -203,8 +203,14 @@ const fbEmbed = fbVideoHref
       }
     </style>
     <div class="px-6 lg:px-10" id="ig-feed">
+      {/* preconnect: acelera la primera conexión a Elfsight (menos demora inicial) */}
+      <link rel="preconnect" href="https://elfsightcdn.com" />
+      <link rel="preconnect" href="https://static.elfsight.com" crossorigin />
+      <link rel="preconnect" href="https://core.service.elfsight.com" />
+      {/* Sin data-elfsight-app-lazy → carga inmediata (evita que en la 1ª visita
+          no aparezca hasta recargar). */}
       <script is:inline async src="https://elfsightcdn.com/platform.js"></script>
-      <div class="elfsight-app-b3404336-9a18-465f-a626-0756bfb2e97e" data-elfsight-app-lazy></div>
+      <div class="elfsight-app-b3404336-9a18-465f-a626-0756bfb2e97e"></div>
     </div>
   </section>
 
